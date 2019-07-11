@@ -39,11 +39,11 @@ var speed = cellWidth + wallWidth;
 var x = startCell.x * (cellWidth + wallWidth) + wallWidth;
 var y = startCell.y * (cellWidth + wallWidth) + wallWidth;
 
-var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink'];
+var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown'];
 
 setPlayerColor();
-createMaze();
-render();
+//createMaze();
+//render();
 
 document.onkeyup = function(key) {
     if (key.key === 'w' && playerCell() & cellStatus.NORTH) y -= speed;
@@ -66,8 +66,9 @@ document.onkeyup = function(key) {
     if (reachedGoal()) alert("You did it!\n\nGood job.");
 }
 
-function render() {
+function render(isDrawPlayer = true) {
     drawBackground();
+    if (isDrawPlayer)
     drawPlayer();
 }
 
@@ -80,7 +81,7 @@ function playerCell() {
 }
 
 function createMaze() {
-    while (visitedCellCount < mazeColumnCount * mazeRowCount) {
+    if (visitedCellCount < mazeColumnCount * mazeRowCount) {
         var neighbors = [];
 
         if (cellStack[cellStack.length - 1].y > 0 && mazeCells[offsetX(0)][offsetY(-1)] === cellStatus.NOT_ASSIGNED)
@@ -127,6 +128,12 @@ function createMaze() {
         else {
             cellStack.pop();
         }
+        render(false);
+        setTimeout(function() {createMaze();}, 1);
+    }
+    else
+    {
+        render();
     }
 }
 
@@ -153,6 +160,8 @@ function setPlayerColor(pretext) {
                 spriteColor = "#00CC00";
                 break;
         }
+
+        createMaze();
     }
 }
 
@@ -161,10 +170,12 @@ function drawBackground() {
     context.fillRect(0, 0, canvas.width, canvas.height);
     for (var x = 0; x < mazeColumnCount; x++) {
         for (var y = 0; y < mazeRowCount; y++) {
-            if (mazeCells[x][y] !== cellStatus.NOT_ASSIGNED)
+            if (x === cellStack[cellStack.length - 1].x && y == cellStack[cellStack.length - 1].y && visitedCellCount < mazeColumnCount * mazeRowCount)
+                context.fillStyle = spriteColor;
+            else if (mazeCells[x][y] !== cellStatus.NOT_ASSIGNED)
                 context.fillStyle = "#FFFFFF";
             else
-                context.fillStyle = "#0000FF";
+                context.fillStyle = spriteColor;
             
             context.fillRect(x * (cellWidth + wallWidth) + wallWidth, y * (cellWidth + wallWidth) + wallWidth, cellWidth, cellWidth);
 
@@ -182,6 +193,7 @@ function drawBackground() {
         }
     }
 }
+
 
 function drawPlayer() {
     context.beginPath();
