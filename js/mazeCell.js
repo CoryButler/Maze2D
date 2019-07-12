@@ -1,0 +1,3 @@
+function MazeCell () {
+    this.status = [];
+}
