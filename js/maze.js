@@ -1,5 +1,3 @@
-var cellStatus = { EAST: 0, NORTH: 1, WEST: 2, SOUTH: 3, VISITED: 4, START: 5, END: 6, STEPPED: 7 };
-    
 function Maze() {
     var mazeReady = new Event('mazeReady');
 

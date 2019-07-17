@@ -1,4 +1,7 @@
-function Ai_RandomTurns (maze) {
+const aiTypes = { RANDOM: 0, RANDOM_TURNS: 1, UNVISITED_TURNS: 2, RIGHT_HAND: 3, LEFT_HAND: 4, DIJKSTRA: 5, A_STAR: 6 };
+
+function Ai (maze, aiType) {
+    var _aiType = aiType;
     var _maze = maze;
     var controlsEnabled = false;
     var prevDirection = cellStatus.SOUTH;
@@ -30,20 +33,31 @@ function Ai_RandomTurns (maze) {
     var logicLoop = function() {
         if (!controlsEnabled) return;
 
-        var neighbors = [];
-        if (playerCell().hasStatus(cellStatus.NORTH)) neighbors.push(cellStatus.NORTH);
-        if (playerCell().hasStatus(cellStatus.SOUTH)) neighbors.push(cellStatus.SOUTH);
-        if (playerCell().hasStatus(cellStatus.WEST)) neighbors.push(cellStatus.WEST);
-        if (playerCell().hasStatus(cellStatus.EAST)) neighbors.push(cellStatus.EAST);
+        var direction;
 
-        var direction = neighbors[Math.floor(Math.random() * neighbors.length)];
-
-        if (neighbors.length === 1) prevDirection = opposite(prevDirection);
-
-        while (direction === opposite(prevDirection)) {
-            direction = neighbors[Math.floor(Math.random() * neighbors.length)];
+        switch(_aiType) {
+            case aiTypes.RANDOM:
+                direction = random();
+                break;
+            case aiTypes.RANDOM_TURNS:
+                direction = randomTurns();
+                break;
+            case aiTypes.UNVISITED_TURNS:
+                direction = unvisitedTurns();
+                break;
+            case aiTypes.RIGHT_HAND:
+                direction = rightHand();
+                break;
+            case aiTypes.LEFT_HAND:
+                direction = leftHand();
+                break;
+            case aiTypes.DIJKSTRA:
+                direction = dijkstra();
+                break;
+            case aiTypes.A_STAR:
+                direction = aStar();
+                break;
         }
-        prevDirection = direction;
 
         if (direction === cellStatus.NORTH) y -= speed;
         if (direction === cellStatus.SOUTH) y += speed;
@@ -68,6 +82,66 @@ function Ai_RandomTurns (maze) {
             alert("You did it!\n\nGood job.");
         else 
             setTimeout(function() { logicLoop(); }, 100);
+    }
+
+    const random = function () {
+        var neighbors = getNeighbors();
+
+        return neighbors[Math.floor(Math.random() * neighbors.length)];
+    }
+
+    const randomTurns = function () {
+        var neighbors = getNeighbors();
+
+        var direction = neighbors[Math.floor(Math.random() * neighbors.length)];
+
+        if (neighbors.length === 1) prevDirection = opposite(prevDirection);
+
+        while (direction === opposite(prevDirection)) {
+            direction = neighbors[Math.floor(Math.random() * neighbors.length)];
+        }
+        prevDirection = direction;
+        
+        return direction;
+    }
+
+    const rightHand = function () {
+        var turnOrder = [ cellStatus.NORTH, cellStatus.EAST, cellStatus.SOUTH, cellStatus.WEST ];
+        var neighbors = getNeighbors();
+        var direction = turnOrder[ modulo((turnOrder.indexOf(prevDirection) + 1), turnOrder.length) ];
+        var turnsAttempted = 0;
+
+        while (!neighbors.some(n => n === direction)) {
+            direction = turnOrder[ modulo((turnOrder.indexOf(prevDirection) - turnsAttempted), turnOrder.length) ];
+            turnsAttempted++;
+        }
+        
+        prevDirection = direction;        
+        return direction;
+    }
+
+    const leftHand = function () {
+        var turnOrder = [ cellStatus.NORTH, cellStatus.EAST, cellStatus.SOUTH, cellStatus.WEST ];
+        var neighbors = getNeighbors();
+        var direction = turnOrder[ modulo((turnOrder.indexOf(prevDirection) - 1), turnOrder.length) ];
+        var turnsAttempted = 0;
+
+        while (!neighbors.some(n => n === direction)) {
+            direction = turnOrder[ modulo((turnOrder.indexOf(prevDirection) + turnsAttempted), turnOrder.length) ];
+            turnsAttempted++;
+        }
+        
+        prevDirection = direction;        
+        return direction;
+    }
+
+    const getNeighbors = function () {
+        var neighbors = [];
+        if (playerCell().hasStatus(cellStatus.EAST)) neighbors.push(cellStatus.EAST);
+        if (playerCell().hasStatus(cellStatus.NORTH)) neighbors.push(cellStatus.NORTH);
+        if (playerCell().hasStatus(cellStatus.WEST)) neighbors.push(cellStatus.WEST);
+        if (playerCell().hasStatus(cellStatus.SOUTH)) neighbors.push(cellStatus.SOUTH);
+        return neighbors;
     }
 
     const opposite = function (dir) {
