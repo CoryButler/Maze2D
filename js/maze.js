@@ -10,8 +10,8 @@ function Maze() {
         });
         return vars;
     }
-    var cellWidth = 20;
-    var wallWidth = 2;
+    var cellWidth = 32;
+    var wallWidth = 4;
     var columnCount = getUrlVars()['w'] !== undefined ? getUrlVars()['w'] : 20;
     var rowCount = getUrlVars()['h'] !== undefined ? getUrlVars()['h'] : 20;
     var width = columnCount * (cellWidth + wallWidth) + wallWidth;
