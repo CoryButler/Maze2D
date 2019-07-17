@@ -105,6 +105,25 @@ function Ai (maze, aiType) {
         return direction;
     }
 
+    const unvisitedTurns = function () {
+        var neighbors = getNeighbors();
+
+        var direction = neighbors[Math.floor(Math.random() * neighbors.length)];
+
+        if (neighbors.length === 1) prevDirection = opposite(prevDirection);
+
+        else {
+            var turnsAttempted = 0;
+
+            while (direction === opposite(prevDirection) || (cellWasStepped(direction) && neighbors.some(n => !cellWasStepped(n)))) {
+                direction = neighbors[Math.floor(Math.random() * neighbors.length)];
+            }
+        }
+        prevDirection = direction;
+        
+        return direction;
+    }
+
     const rightHand = function () {
         var turnOrder = [ cellStatus.NORTH, cellStatus.EAST, cellStatus.SOUTH, cellStatus.WEST ];
         var neighbors = getNeighbors();
@@ -142,6 +161,19 @@ function Ai (maze, aiType) {
         if (playerCell().hasStatus(cellStatus.WEST)) neighbors.push(cellStatus.WEST);
         if (playerCell().hasStatus(cellStatus.SOUTH)) neighbors.push(cellStatus.SOUTH);
         return neighbors;
+    }
+
+    const cellWasStepped = function (direction) {
+        switch (direction) {
+            case cellStatus.NORTH:
+                return _maze.cells()[((x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()))][((y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth())) - 1].hasStatus(cellStatus.STEPPED);
+            case cellStatus.SOUTH:
+                return _maze.cells()[((x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()))][((y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth())) + 1].hasStatus(cellStatus.STEPPED);
+            case cellStatus.WEST:
+                return _maze.cells()[((x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth())) - 1][((y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()))].hasStatus(cellStatus.STEPPED);
+            case cellStatus.EAST:
+                return _maze.cells()[((x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth())) + 1][((y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()))].hasStatus(cellStatus.STEPPED);
+        }
     }
 
     const opposite = function (dir) {
