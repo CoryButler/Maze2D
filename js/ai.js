@@ -1,37 +1,45 @@
 const aiTypes = { RANDOM: 0, RANDOM_TURNS: 1, UNVISITED_TURNS: 2, RIGHT_HAND: 3, LEFT_HAND: 4, DIJKSTRA: 5, A_STAR: 6 };
+const aiSpeeds = { VERY_SLOW: 2000, SLOW: 1000, NORMAL: 500, FAST: 250, VERY_FAST: 125, SUPER_FAST: 1, TELEPORT: 0 };
 
-function Ai (maze, aiType) {
+function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) {
     var _aiType = aiType;
     var _maze = maze;
     var controlsEnabled = false;
     var prevDirection = cellStatus.SOUTH;
+    var stepsTaken = 0;
 
     window.addEventListener('mazeReady', function() { 
-        _maze.markCell(
-            (x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()),
-            (y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()),
-            cellStatus.STEPPED);
+        _maze.markCell(x, y, cellStatus.STEPPED);
         render();
         toggleControls();
         logicLoop();  }
     );
 
-    var speed = _maze.cellWidth() + _maze.wallWidth();
+    var _aiSpeed = aiSpeed;
 
     var canvas = document.getElementsByTagName("canvas")[0];
 
     var context = canvas.getContext("2d");
 
-    var spriteColor = "pink";
-    var x = _maze.startCell().x * (_maze.cellWidth() + _maze.wallWidth()) + _maze.wallWidth();
-    var y = _maze.startCell().y * (_maze.cellWidth() + _maze.wallWidth()) + _maze.wallWidth();
+    var x = _maze.startCell().x;
+    var y = _maze.startCell().y;
     
     var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'grey'];
+    var spriteColor = colors[Math.floor(Math.random() * colors.length)];
 
     this.spriteColor = () => { return spriteColor; }
     
     var logicLoop = function() {
         if (!controlsEnabled) return;
+
+        if (reachedGoal())  {
+            var aiNames = invertJson(aiTypes);
+            alert("AI_" + aiNames[_aiType] + " reached the end in " + stepsTaken + " steps.");
+            toggleControls();
+            return;
+        }
+
+        stepsTaken++;
 
         var direction;
 
@@ -59,29 +67,28 @@ function Ai (maze, aiType) {
                 break;
         }
 
-        if (direction === cellStatus.NORTH) y -= speed;
-        if (direction === cellStatus.SOUTH) y += speed;
-        if (direction === cellStatus.WEST) x -= speed;
-        if (direction === cellStatus.EAST) x += speed;
+        if (direction === cellStatus.NORTH) y -= 1;
+        if (direction === cellStatus.SOUTH) y += 1;
+        if (direction === cellStatus.WEST) x -= 1;
+        if (direction === cellStatus.EAST) x += 1;
     
-        if (x < _maze.wallWidth()) x = _maze.wallWidth();
-        if (x > _maze.width() - _maze.cellWidth() - _maze.wallWidth()) x = _maze.width() - _maze.cellWidth() - _maze.wallWidth();
+        if (x < 0) x = 0;
+        if (x > _maze.columnCount() - 1) x = _maze.columnCount() - 1;
     
-        if (y < _maze.wallWidth()) y = _maze.wallWidth();
-        if (y > _maze.height() - _maze.cellWidth() - _maze.wallWidth()) y = _maze.height() - _maze.cellWidth() - _maze.wallWidth();
+        if (y < 0) y = 0;
+        if (y > _maze.rowCount() - 1) y = _maze.rowCount() - 1;
         
-        _maze.markCell(
-            (x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()),
-            (y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()),
-             cellStatus.STEPPED);
+        _maze.markCell(x, y, cellStatus.STEPPED);
 
-        _maze.render();
-        render();
-    
-        if (reachedGoal()) 
-            alert("You did it!\n\nGood job.");
-        else 
-            setTimeout(function() { logicLoop(); }, 100);
+        if (_aiSpeed === aiSpeeds.TELEPORT){
+            try {
+                logicLoop();
+            }
+            catch {
+                setTimeout(function() { logicLoop(); }, _aiSpeed);
+            }
+        }
+        else setTimeout(function() { logicLoop(); }, _aiSpeed);
     }
 
     const random = function () {
@@ -113,8 +120,6 @@ function Ai (maze, aiType) {
         if (neighbors.length === 1) prevDirection = opposite(prevDirection);
 
         else {
-            var turnsAttempted = 0;
-
             while (direction === opposite(prevDirection) || (cellWasStepped(direction) && neighbors.some(n => !cellWasStepped(n)))) {
                 direction = neighbors[Math.floor(Math.random() * neighbors.length)];
             }
@@ -166,13 +171,13 @@ function Ai (maze, aiType) {
     const cellWasStepped = function (direction) {
         switch (direction) {
             case cellStatus.NORTH:
-                return _maze.cells()[((x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()))][((y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth())) - 1].hasStatus(cellStatus.STEPPED);
+                return _maze.cells()[x][y].hasStatus(cellStatus.STEPPED);
             case cellStatus.SOUTH:
-                return _maze.cells()[((x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()))][((y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth())) + 1].hasStatus(cellStatus.STEPPED);
+                return _maze.cells()[x][y].hasStatus(cellStatus.STEPPED);
             case cellStatus.WEST:
-                return _maze.cells()[((x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth())) - 1][((y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()))].hasStatus(cellStatus.STEPPED);
+                return _maze.cells()[x][y].hasStatus(cellStatus.STEPPED);
             case cellStatus.EAST:
-                return _maze.cells()[((x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth())) + 1][((y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()))].hasStatus(cellStatus.STEPPED);
+                return _maze.cells()[x][y].hasStatus(cellStatus.STEPPED);
         }
     }
 
@@ -212,30 +217,40 @@ function Ai (maze, aiType) {
     }
 
     const reachedGoal = function() {
-        return playerCell().status.indexOf(cellStatus.END) >= 0;
+        return playerCell().hasStatus(cellStatus.END);
     }
 
     const playerCell = function() {
-        return _maze.cells()[(x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth())][(y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth())];
+        return _maze.cells()[x][y];
     }
 
+    this.render = () => { render(); }
     const render = function() {
+        if (!controlsEnabled) return;
+        
+        var screenSpaceX = toScreenSpace(x);
+        var screenSpaceY = toScreenSpace(y);
+
         context.beginPath();
-        context.arc(x + _maze.cellWidth() / 2, y + _maze.cellWidth() / 2, _maze.cellWidth() / 2, 0, Math.PI * 2);
+        context.arc(screenSpaceX + _maze.cellWidth() / 2, screenSpaceY + _maze.cellWidth() / 2, _maze.cellWidth() / 2, 0, Math.PI * 2);
         context.fillStyle = spriteColor;
         context.stroke();
         context.fill();
 
         context.beginPath();
-        context.arc(x + _maze.cellWidth() / 2, y + _maze.cellWidth() / 2, _maze.cellWidth() / 3, 0, Math.PI);
+        context.arc(screenSpaceX + _maze.cellWidth() / 2, screenSpaceY + _maze.cellWidth() / 2, _maze.cellWidth() / 3, 0, Math.PI);
         context.stroke();
 
         context.beginPath();
-        context.arc(x + _maze.cellWidth() * 0.35, y + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
+        context.arc(screenSpaceX + _maze.cellWidth() * 0.35, screenSpaceY + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
         context.stroke();
 
         context.beginPath();
-        context.arc(x + _maze.cellWidth() * 0.65, y + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
+        context.arc(screenSpaceX + _maze.cellWidth() * 0.65, screenSpaceY + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
         context.stroke();
+    }
+
+    const toScreenSpace = function(n)  {
+        return n * (_maze.cellWidth() + _maze.wallWidth()) + _maze.wallWidth();
     }
 }

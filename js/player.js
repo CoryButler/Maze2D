@@ -1,58 +1,49 @@
 function Player(maze) {
+    var _maze = maze;
     var controlsEnabled = false;
+    var stepsTaken = 0;
 
     window.addEventListener('mazeReady', function() { 
-        _maze.markCell(
-            (x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()),
-            (y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()),
-            cellStatus.STEPPED);
+        _maze.markCell(x, y, cellStatus.STEPPED);
         render();
         toggleControls(); }
     );
-
-    var _maze = maze;
-
-    var speed = _maze.cellWidth() + _maze.wallWidth();
 
     var canvas = document.getElementsByTagName("canvas")[0];
 
     var context = canvas.getContext("2d");
 
-    var spriteColor = "pink";
-    var x = _maze.startCell().x * (_maze.cellWidth() + _maze.wallWidth()) + _maze.wallWidth();
-    var y = _maze.startCell().y * (_maze.cellWidth() + _maze.wallWidth()) + _maze.wallWidth();
+    var x = _maze.startCell().x;
+    var y = _maze.startCell().y;
     
     var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'grey'];
+    var spriteColor = "pink";
 
     this.spriteColor = () => { return spriteColor; }
 
     document.onkeyup = function(key) {
         if (!controlsEnabled) return;
 
-        if (key.key === 'w' && playerCell().status.indexOf(cellStatus.NORTH) >= 0) y -= speed;
-        if (key.key === 'a' && playerCell().status.indexOf(cellStatus.WEST) >= 0) x -= speed;
-        if (key.key === 's' && playerCell().status.indexOf(cellStatus.SOUTH) >= 0) y += speed;
-        if (key.key === 'd' && playerCell().status.indexOf(cellStatus.EAST) >= 0) x += speed;
-        if (key.key === 'ArrowUp' && playerCell().status.indexOf(cellStatus.NORTH) >= 0) y -= speed;
-        if (key.key === 'ArrowLeft' && playerCell().status.indexOf(cellStatus.WEST) >= 0) x -= speed;
-        if (key.key === 'ArrowDown' && playerCell().status.indexOf(cellStatus.SOUTH) >= 0) y += speed;
-        if (key.key === 'ArrowRight' && playerCell().status.indexOf(cellStatus.EAST) >= 0) x += speed;
-    
-        if (x < _maze.wallWidth()) x = _maze.wallWidth();
-        if (x > _maze.width() - _maze.cellWidth() - _maze.wallWidth()) x = _maze.width() - _maze.cellWidth() - _maze.wallWidth();
-    
-        if (y < _maze.wallWidth()) y = _maze.wallWidth();
-        if (y > _maze.height() - _maze.cellWidth() - _maze.wallWidth()) y = _maze.height() - _maze.cellWidth() - _maze.wallWidth();
-        
-        _maze.markCell(
-            (x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()),
-            (y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth()),
-             cellStatus.STEPPED);
+        var prevX = x;
+        var prevY = y;
 
-        _maze.render();
-        render();
-    
-        if (reachedGoal()) alert("You did it!\n\nGood job.");
+        if (key.key === 'w' && playerCell().hasStatus(cellStatus.NORTH)) y -= 1;
+        if (key.key === 'a' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
+        if (key.key === 's' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;
+        if (key.key === 'd' && playerCell().hasStatus(cellStatus.EAST)) x += 1;
+        if (key.key === 'ArrowUp' && playerCell().hasStatus(cellStatus.NORTH)) y -= 1;
+        if (key.key === 'ArrowLeft' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
+        if (key.key === 'ArrowDown' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;
+        if (key.key === 'ArrowRight' && playerCell().hasStatus(cellStatus.EAST)) x += 1;
+        
+        if (x !== prevX || y !== prevY) stepsTaken++;
+        
+        _maze.markCell(x, y, cellStatus.STEPPED);
+
+        if (reachedGoal()) {
+            alert("You did it!\n\nGood job.\n\nYou took " + stepsTaken + " steps.");
+            toggleControls();
+        }
     }
 
     this.setColor = function (pretext) {
@@ -78,30 +69,40 @@ function Player(maze) {
     }
 
     const reachedGoal = function() {
-        return playerCell().status.indexOf(cellStatus.END) >= 0;
+        return playerCell().hasStatus(cellStatus.END);
     }
 
     const playerCell = function() {
-        return _maze.cells()[(x - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth())][(y - _maze.wallWidth()) / (_maze.cellWidth() + _maze.wallWidth())];
+        return _maze.cells()[x][y];
     }
 
+    this.render = () => { render(); }
     const render = function() {
+        if (!controlsEnabled) return;
+        
+        var screenSpaceX = toScreenSpace(x);
+        var screenSpaceY = toScreenSpace(y);
+
         context.beginPath();
-        context.arc(x + _maze.cellWidth() / 2, y + _maze.cellWidth() / 2, _maze.cellWidth() / 2, 0, Math.PI * 2);
+        context.arc(screenSpaceX + _maze.cellWidth() / 2, screenSpaceY + _maze.cellWidth() / 2, _maze.cellWidth() / 2, 0, Math.PI * 2);
         context.fillStyle = spriteColor;
         context.stroke();
         context.fill();
 
         context.beginPath();
-        context.arc(x + _maze.cellWidth() / 2, y + _maze.cellWidth() / 2, _maze.cellWidth() / 3, 0, Math.PI);
+        context.arc(screenSpaceX + _maze.cellWidth() / 2, screenSpaceY + _maze.cellWidth() / 2, _maze.cellWidth() / 3, 0, Math.PI);
         context.stroke();
 
         context.beginPath();
-        context.arc(x + _maze.cellWidth() * 0.35, y + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
+        context.arc(screenSpaceX + _maze.cellWidth() * 0.35, screenSpaceY + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
         context.stroke();
 
         context.beginPath();
-        context.arc(x + _maze.cellWidth() * 0.65, y + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
+        context.arc(screenSpaceX + _maze.cellWidth() * 0.65, screenSpaceY + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
         context.stroke();
+    }
+
+    const toScreenSpace = function(n)  {
+        return n * (_maze.cellWidth() + _maze.wallWidth()) + _maze.wallWidth();
     }
 }
