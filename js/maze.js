@@ -1,5 +1,10 @@
 function Maze() {
     var mazeReady = new Event('mazeReady');
+    var doNotRender = false;
+    window.addEventListener('mazeReady', function() { 
+        doNotRender = true;
+      }
+    );
 
     const getUrlVars = function() {
         var vars = {};
@@ -8,8 +13,8 @@ function Maze() {
         });
         return vars;
     }
-    var cellWidth = 16;//32;
-    var wallWidth = 4;//4;
+    var cellWidth = 32;
+    var wallWidth = 2;
     var columnCount = getUrlVars()['w'] !== undefined ? getUrlVars()['w'] : 20;
     var rowCount = getUrlVars()['h'] !== undefined ? getUrlVars()['h'] : 20;
     var width = columnCount * (cellWidth + wallWidth) + wallWidth;
@@ -110,6 +115,7 @@ function Maze() {
                 cellStack.pop();
             }
         }
+        render();
         window.dispatchEvent(mazeReady);
     }
 
@@ -178,7 +184,7 @@ function Maze() {
         return cellStack[cellStack.length - 1].y + y;
     }
 
-    this.render = function() { render(); }
+    this.render = function() { if (!doNotRender) render(); }
     const render = function() {
         context.fillStyle = "#000000";
         context.fillRect(0, 0, width, height);

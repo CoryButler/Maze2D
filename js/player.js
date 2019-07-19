@@ -1,4 +1,6 @@
-function Player(maze) {
+function Player(maze, id) {
+    var t = this;
+    var _id = id;
     var _maze = maze;
     var controlsEnabled = false;
     var stepsTaken = 0;
@@ -21,20 +23,26 @@ function Player(maze) {
 
     this.spriteColor = () => { return spriteColor; }
 
-    document.onkeyup = function(key) {
+    var handler = function(key) {
         if (!controlsEnabled) return;
 
         var prevX = x;
         var prevY = y;
 
-        if (key.key === 'w' && playerCell().hasStatus(cellStatus.NORTH)) y -= 1;
-        if (key.key === 'a' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
-        if (key.key === 's' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;
-        if (key.key === 'd' && playerCell().hasStatus(cellStatus.EAST)) x += 1;
-        if (key.key === 'ArrowUp' && playerCell().hasStatus(cellStatus.NORTH)) y -= 1;
-        if (key.key === 'ArrowLeft' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
-        if (key.key === 'ArrowDown' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;
-        if (key.key === 'ArrowRight' && playerCell().hasStatus(cellStatus.EAST)) x += 1;
+        console.log(_id, key.key);
+
+        if (_id === 1 || _id === undefined) {
+            if (key.key === 'w' && playerCell().hasStatus(cellStatus.NORTH)) y -= 1;
+            if (key.key === 'a' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
+            if (key.key === 's' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;
+            if (key.key === 'd' && playerCell().hasStatus(cellStatus.EAST)) x += 1;
+        }
+        if (_id === 2 || _id === undefined) {
+            if (key.key === 'ArrowUp' && playerCell().hasStatus(cellStatus.NORTH)) y -= 1;
+            if (key.key === 'ArrowLeft' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
+            if (key.key === 'ArrowDown' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;
+            if (key.key === 'ArrowRight' && playerCell().hasStatus(cellStatus.EAST)) x += 1;
+        }
         
         if (x !== prevX || y !== prevY) stepsTaken++;
         
@@ -45,6 +53,8 @@ function Player(maze) {
             toggleControls();
         }
     }
+
+    document.addEventListener("keyup", handler);
 
     this.setColor = function (pretext) {
         if (pretext === undefined) pretext = "";

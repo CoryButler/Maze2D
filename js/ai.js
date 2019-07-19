@@ -17,8 +17,10 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
 
     var _aiSpeed = aiSpeed;
 
-    var canvas = document.getElementsByTagName("canvas")[0];
-
+    var canvas = document.createElement("canvas");
+    canvas.width = _maze.width();
+    canvas.height = _maze.height();
+    document.getElementsByTagName("body")[0].appendChild(canvas);
     var context = canvas.getContext("2d");
 
     var x = _maze.startCell().x;
@@ -228,6 +230,8 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
     const render = function() {
         if (!controlsEnabled) return;
         
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
         var screenSpaceX = toScreenSpace(x);
         var screenSpaceY = toScreenSpace(y);
 
