@@ -1,30 +1,32 @@
 function LayerManager () {
-    const cycleSpeed = 50;
-    var cycleCount = 0;
-
+    const _cycleSpeed = 500;
+    var _isCycling = false;
     var _trailLayers = [];
     var _spriteLayers = [];
 
     this.addTrail = function (canvas) {
         _trailLayers.push(canvas);
+        if (_trailLayers.length > 1 && !_isCycling) {
+            _isCycling = true;
+            cycleLayers();
+        }
     }
 
     this.addSprite = function (canvas) {
         _spriteLayers.push(canvas);
+        if (_spriteLayers.length > 1 && !_isCycling) {
+            _isCycling = true;
+            cycleLayers();
+        }
     }
 
-    this.cycleLayers = function () {
-        if (cycleCount < cycleSpeed) {
-            cycleCount++;
-            return;
-        }
+    const cycleLayers = function () {
+        if (!_isCycling) return;
 
-        cycleCount = 0;
+        var zIndex = 1;
 
         _trailLayers.push(_trailLayers.shift());
         _spriteLayers.push(_spriteLayers.shift());
-
-        var zIndex = 1;
 
         _trailLayers.forEach(layer => {
             layer.style.zIndex = zIndex++;
@@ -33,5 +35,7 @@ function LayerManager () {
         _spriteLayers.forEach(layer => {
             layer.style.zIndex = zIndex++;
         })
+
+        setTimeout(() => { cycleLayers(); }, _cycleSpeed);
     } 
 }

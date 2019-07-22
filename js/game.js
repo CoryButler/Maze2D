@@ -18,7 +18,6 @@ function Game() {
     maze.create(players[0].spriteColor(), false);
 
     const renderLoop = function() {
-        layerManager.cycleLayers();
         maze.render();
         players.forEach(player => { player.render(); });
         setTimeout(() => { renderLoop(); }, 1);
