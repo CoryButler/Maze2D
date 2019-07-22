@@ -2,6 +2,8 @@ function Maze() {
     var mazeReady = new Event('mazeReady');
     var doNotRender = false;
     window.addEventListener('mazeReady', function() { 
+        setEndCell();
+        render();
         doNotRender = true;
       }
     );
@@ -15,8 +17,8 @@ function Maze() {
     }
     var cellWidth = 28;
     var wallWidth = 4;
-    var columnCount = getUrlVars()['w'] !== undefined ? getUrlVars()['w'] : 20;
-    var rowCount = getUrlVars()['h'] !== undefined ? getUrlVars()['h'] : 20;
+    var columnCount = getUrlVars()['w'] !== undefined ? getUrlVars()['w'] : 8;
+    var rowCount = getUrlVars()['h'] !== undefined ? getUrlVars()['h'] : 8;
     var width = columnCount * (cellWidth + wallWidth) + wallWidth;
     var height = rowCount * (cellWidth + wallWidth) + wallWidth;
     var cells = [];
@@ -30,10 +32,10 @@ function Maze() {
         }
     }
 
-    var startCell = {x: Math.floor(Math.random() * columnCount * 0.25), y: 0};
+    var startCell = {x: Math.floor(Math.random() * columnCount), y: 0};
     var endCell = {x: Math.floor((Math.random() * 0.25 + 0.75) * columnCount), y: rowCount - 1};
     cells[startCell.x][startCell.y].status.push(cellStatus.START);
-    cells[endCell.x][endCell.y].status.push(cellStatus.END);
+    //cells[endCell.x][endCell.y].status.push(cellStatus.END);
 
     var initPos = { x: Math.floor(Math.random() * columnCount), y: Math.floor(Math.random() * rowCount) };
     cellStack.push(initPos);
@@ -109,6 +111,8 @@ function Maze() {
                 }
     
                 cells[offsetX(0)][offsetY(0)].status.push(cellStatus.VISITED);
+                cells[offsetX(0)][offsetY(0)].x = offsetX(0);
+                cells[offsetX(0)][offsetY(0)].y = offsetY(0);
                 visitedCellCount++;
             }
             else {
@@ -182,6 +186,99 @@ function Maze() {
     
     const offsetY = function(y) {
         return cellStack[cellStack.length - 1].y + y;
+    }
+
+    const setEndCell = function () {
+        var cellValues = [];
+        var currentX = startCell.x;
+        var currentY = startCell.y;
+
+        for (var i = 0; i < columnCount; i++) {
+            cellValues.push([]);
+            for (var j = 0; j < rowCount; j++) {
+                cellValues[i].push({ distanceFromStart: 0, decisionsFromStart: 0 });
+            }
+        }
+
+
+        var frontier = [cells[currentX][currentY]];
+        while (frontier.length > 0) {
+            var distanceFromStart = cellValues[frontier[0].x][frontier[0].y].distanceFromStart + 1;
+            var decisionsFromStart = cellValues[frontier[0].x][frontier[0].y].decisionsFromStart;
+            if (getNeighbors(frontier[0]).length >= 3) decisionsFromStart++;
+            
+            var newFrontier = [];
+            if (frontier[0].hasStatus(cellStatus.EAST)  && !cells[frontier[0].x + 1][frontier[0].y].hasStatus(86)) {
+                newFrontier.push(cells[frontier[0].x + 1][frontier[0].y]);
+                cellValues[frontier[0].x + 1][frontier[0].y] = { distanceFromStart: distanceFromStart, decisionsFromStart: decisionsFromStart };
+            }
+            if (frontier[0].hasStatus(cellStatus.NORTH) && !cells[frontier[0].x][frontier[0].y - 1].hasStatus(86)) {
+                newFrontier.push(cells[frontier[0].x][frontier[0].y - 1]);
+                cellValues[frontier[0].x][frontier[0].y - 1] = { distanceFromStart: distanceFromStart, decisionsFromStart: decisionsFromStart };
+            }
+            if (frontier[0].hasStatus(cellStatus.WEST)  && !cells[frontier[0].x - 1][frontier[0].y].hasStatus(86)) {
+                newFrontier.push(cells[frontier[0].x - 1][frontier[0].y]);
+                cellValues[frontier[0].x - 1][frontier[0].y] = { distanceFromStart: distanceFromStart, decisionsFromStart: decisionsFromStart };
+            }
+            if (frontier[0].hasStatus(cellStatus.SOUTH) && !cells[frontier[0].x][frontier[0].y + 1].hasStatus(86)) {
+                newFrontier.push(cells[frontier[0].x][frontier[0].y + 1]);
+                cellValues[frontier[0].x][frontier[0].y + 1] = { distanceFromStart: distanceFromStart, decisionsFromStart: decisionsFromStart };
+            }
+
+            cells[frontier[0].x][frontier[0].y].status.push(86);
+
+            frontier.shift();
+
+            newFrontier.forEach(nf => frontier.unshift(nf));
+        }
+
+        var bestCell = { x: 0, y: rowCount - 1 };
+        var currentDecisions = 0;
+        var currentDistance = 0;
+
+        // TODO: fix rows/columns issue
+        for (var i = 0; i < 8; i++) {
+            if (cellValues[i][7].decisionsFromStart > currentDecisions) {
+                currentDecisions = cellValues[i][7].decisionsFromStart;
+                currentDistance = cellValues[i][7].distanceFromStart;
+                bestCell.x = i;
+            }
+            else if (cellValues[i][7].decisionsFromStart === currentDecisions && cellValues[i][7].distanceFromStart > currentDistance) {
+                currentDistance = cellValues[i][7].distanceFromStart;
+                bestCell.x = i;
+            }
+        }
+
+        endCell = bestCell;
+        cells[endCell.x][endCell.y].status.push(cellStatus.END);
+
+        cellValues[startCell.x][startCell.y] = { distanceFromStart: "#", decisionsFromStart: "#" };
+        cellValues[bestCell.x][bestCell.y] = { distanceFromStart: "#", decisionsFromStart: "#" };
+
+        for (var i = 0; i < rowCount; i++) {
+            var toLog = "";
+            for (var j = 0; j < columnCount; j++) {
+                toLog += cellValues[j][i].distanceFromStart + " ";
+            }
+            console.log(toLog);
+        }
+
+        for (var i = 0; i < rowCount; i++) {
+            var toLog = "";
+            for (var j = 0; j < columnCount; j++) {
+                toLog += cellValues[j][i].decisionsFromStart + " ";
+            }
+            console.log(toLog);
+        }
+    }
+    
+    const getNeighbors = function (cell) {
+        var neighbors = [];
+        if (cell.hasStatus(cellStatus.EAST))  neighbors.push(cellStatus.EAST);
+        if (cell.hasStatus(cellStatus.NORTH)) neighbors.push(cellStatus.NORTH);
+        if (cell.hasStatus(cellStatus.WEST))  neighbors.push(cellStatus.WEST);
+        if (cell.hasStatus(cellStatus.SOUTH)) neighbors.push(cellStatus.SOUTH);
+        return neighbors;
     }
 
     this.render = function() { if (!doNotRender) render(); }

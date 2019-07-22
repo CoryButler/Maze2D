@@ -3,4 +3,6 @@ var cellStatus = { EAST: 0, NORTH: 1, WEST: 2, SOUTH: 3, VISITED: 4, START: 5, E
 function MazeCell () {
     this.status = [];
     this.hasStatus = (s) => { return this.status.indexOf(s) >= 0; }
+    this.x = 0;
+    this.y = 0;
 }
