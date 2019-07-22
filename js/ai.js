@@ -17,19 +17,29 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
 
     var _aiSpeed = aiSpeed;
 
+    var canvasTrail = document.createElement("canvas");
+    canvasTrail.width = _maze.width();
+    canvasTrail.height = _maze.height();
+    document.getElementsByTagName("body")[0].appendChild(canvasTrail);
+
     var canvas = document.createElement("canvas");
     canvas.width = _maze.width();
     canvas.height = _maze.height();
     document.getElementsByTagName("body")[0].appendChild(canvas);
+    
     var context = canvas.getContext("2d");
+    var contextTrail = canvasTrail.getContext("2d");
 
     var x = _maze.startCell().x;
     var y = _maze.startCell().y;
     
     var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'grey'];
     var spriteColor = colors[Math.floor(Math.random() * colors.length)];
+    contextTrail.fillStyle = spriteColor;
 
     this.spriteColor = () => { return spriteColor; }
+    this.canvasSprite = () => { return canvas; }
+    this.canvasTrail = () => { return canvasTrail; }
     
     var logicLoop = function() {
         if (!controlsEnabled) return;
@@ -252,6 +262,8 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
         context.beginPath();
         context.arc(screenSpaceX + _maze.cellWidth() * 0.65, screenSpaceY + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
         context.stroke();
+
+        contextTrail.fillRect(screenSpaceX + _maze.wallWidth() * 2, screenSpaceY + _maze.wallWidth() * 2, _maze.cellWidth() - _maze.wallWidth() * 4, _maze.cellWidth() - _maze.wallWidth() * 4);
     }
 
     const toScreenSpace = function(n)  {
