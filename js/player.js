@@ -7,7 +7,6 @@ function Player(maze, id) {
 
     window.addEventListener('mazeReady', function() { 
         _maze.markCell(x, y, cellStatus.STEPPED);
-        render();
         toggleControls(); }
     );
 

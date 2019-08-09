@@ -9,11 +9,8 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
     var stepsTaken = 0;
 
     window.addEventListener('mazeReady', function() {
-        x = _maze.startCell().x;
-        y = _maze.startCell().y;
-        _maze.markCell(x, y, cellStatus.STEPPED);
-        render();
         toggleControls();
+        render();
         logicLoop();  }
     );
 
@@ -89,8 +86,6 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
     
         if (y < 0) y = 0;
         if (y > _maze.rowCount() - 1) y = _maze.rowCount() - 1;
-        
-        _maze.markCell(x, y, cellStatus.STEPPED);
 
         stepsTaken++;
 

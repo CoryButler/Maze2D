@@ -256,10 +256,10 @@ function Maze() {
         endCell = bestCell;
         cells[endCell.x][endCell.y].status.push(cellStatus.END);
 
+        /*
         cellValues[startCell.x][startCell.y] = { distanceFromStart: "#", decisionsFromStart: "#" };
         cellValues[bestCell.x][bestCell.y] = { distanceFromStart: "#", decisionsFromStart: "#" };
 
-        /*
         for (var i = 0; i < rowCount; i++) {
             var toLog = "";
             for (var j = 0; j < columnCount; j++) {
@@ -341,10 +341,5 @@ function Maze() {
                 }
             }
         }
-    }
-
-    this.markCell = function(x, y, status) {
-        if (!cells[x][y].hasStatus(status))
-            cells[x][y].status.push(status);
     }
 }
