@@ -41,8 +41,6 @@ function Player(maze, id) {
         var prevX = x;
         var prevY = y;
 
-        console.log(_id, key.key);
-
         if (_id === 1 || _id === undefined) {
             if (key.key === 'w' && playerCell().hasStatus(cellStatus.NORTH)) y -= 1;
             if (key.key === 'a' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
