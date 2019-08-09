@@ -15,6 +15,7 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
     );
 
     var _aiSpeed = aiSpeed;
+    var cells = _maze.cells().slice();
 
     var canvasTrail = document.createElement("canvas");
     canvasTrail.width = _maze.width();
@@ -49,6 +50,8 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
             toggleControls();
             return;
         }
+
+        cells[x][y].status.push(cellStatus.STEPPED);
 
         var direction;
 
@@ -126,9 +129,10 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
 
         var direction = neighbors[Math.floor(Math.random() * neighbors.length)];
 
-        if (neighbors.length === 1) prevDirection = opposite(prevDirection);
+        if (neighbors.length === 1 && stepsTaken > 0) prevDirection = opposite(prevDirection);
 
         else {
+            if (neighbors.every(n => cellWasStepped(n))) neighbors.forEach(n => { if (n !== opposite(prevDirection)) clearSteppedStatus(n) });
             while (direction === opposite(prevDirection) || (cellWasStepped(direction) && neighbors.some(n => !cellWasStepped(n)))) {
                 direction = neighbors[Math.floor(Math.random() * neighbors.length)];
             }
@@ -180,13 +184,26 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
     const cellWasStepped = function (direction) {
         switch (direction) {
             case cellStatus.NORTH:
-                return _maze.cells()[x][y].hasStatus(cellStatus.STEPPED);
+                return cells[x][y - 1].hasStatus(cellStatus.STEPPED);
             case cellStatus.SOUTH:
-                return _maze.cells()[x][y].hasStatus(cellStatus.STEPPED);
+                return cells[x][y + 1].hasStatus(cellStatus.STEPPED);
             case cellStatus.WEST:
-                return _maze.cells()[x][y].hasStatus(cellStatus.STEPPED);
+                return cells[x - 1][y].hasStatus(cellStatus.STEPPED);
             case cellStatus.EAST:
-                return _maze.cells()[x][y].hasStatus(cellStatus.STEPPED);
+                return cells[x + 1][y].hasStatus(cellStatus.STEPPED);
+        }
+    }
+
+    const clearSteppedStatus = function (direction) {
+        switch (direction) {
+            case cellStatus.NORTH:
+                return cells[x][y - 1].removeStatus(cellStatus.STEPPED);
+            case cellStatus.SOUTH:
+                return cells[x][y + 1].removeStatus(cellStatus.STEPPED);
+            case cellStatus.WEST:
+                return cells[x - 1][y].removeStatus(cellStatus.STEPPED);
+            case cellStatus.EAST:
+                return cells[x + 1][y].removeStatus(cellStatus.STEPPED);
         }
     }
 
@@ -230,7 +247,7 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
     }
 
     const playerCell = function() {
-        return _maze.cells()[x][y];
+        return cells[x][y];
     }
 
     this.render = () => { render(); }

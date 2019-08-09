@@ -1,4 +1,12 @@
 function Maze() {
+    const getUrlVars = function() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
     var mazeReady = new Event('mazeReady');
     var doNotRender = false;
     window.addEventListener('mazeReady', function() { 
@@ -8,17 +16,10 @@ function Maze() {
       }
     );
 
-    const getUrlVars = function() {
-        var vars = {};
-        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-            vars[key] = value;
-        });
-        return vars;
-    }
     var cellWidth = 28;
     var wallWidth = 4;
-    var columnCount = getUrlVars()['w'] !== undefined ? getUrlVars()['w'] : 8;
-    var rowCount = getUrlVars()['h'] !== undefined ? getUrlVars()['h'] : 8;
+    var columnCount = getUrlVars()['w'] !== undefined ? getUrlVars()['w'] : 16;
+    var rowCount = getUrlVars()['h'] !== undefined ? getUrlVars()['h'] : 16;
     var width = columnCount * (cellWidth + wallWidth) + wallWidth;
     var height = rowCount * (cellWidth + wallWidth) + wallWidth;
     var cells = [];
@@ -33,9 +34,8 @@ function Maze() {
     }
 
     var startCell = {x: Math.floor(Math.random() * columnCount), y: 0};
-    var endCell = {x: Math.floor((Math.random() * 0.25 + 0.75) * columnCount), y: rowCount - 1};
+    var endCell = {x: 0, y: 0};
     cells[startCell.x][startCell.y].status.push(cellStatus.START);
-    //cells[endCell.x][endCell.y].status.push(cellStatus.END);
 
     var initPos = { x: Math.floor(Math.random() * columnCount), y: Math.floor(Math.random() * rowCount) };
     cellStack.push(initPos);

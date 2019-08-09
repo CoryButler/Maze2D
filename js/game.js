@@ -4,9 +4,9 @@ function Game() {
     var players = [
         //new Player(maze, 1),
         //new Player(maze, 2)
-        new Ai(maze, aiTypes.RANDOM_TURNS, aiSpeeds.FAST),
-        new Ai(maze, aiTypes.RANDOM_TURNS, aiSpeeds.FAST),
-        new Ai(maze, aiTypes.RANDOM_TURNS, aiSpeeds.FAST)
+        // new Ai(maze, aiTypes.RANDOM_TURNS, aiSpeeds.FAST),
+        new Ai(maze, aiTypes.UNVISITED_TURNS, aiSpeeds.FAST),
+        new Ai(maze, aiTypes.UNVISITED_TURNS, aiSpeeds.FAST)
     ];
 
     players.forEach(player => {
@@ -15,7 +15,7 @@ function Game() {
     })
 
     //players.forEach(player => { player.setColor(); });
-    maze.create(players[0].spriteColor(), false);
+    maze.create(players[0].spriteColor(), true);
 
     const renderLoop = function() {
         maze.render();
