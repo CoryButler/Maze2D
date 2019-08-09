@@ -203,31 +203,36 @@ function Maze() {
 
         var frontier = [cells[currentX][currentY]];
         while (frontier.length > 0) {
+            if (cells[frontier[0].x][frontier[0].y].hasStatus(86)) {
+                frontier.shift();
+                continue;
+            }
+            
             var distanceFromStart = cellValues[frontier[0].x][frontier[0].y].distanceFromStart + 1;
             var decisionsFromStart = cellValues[frontier[0].x][frontier[0].y].decisionsFromStart;
             if (getNeighbors(frontier[0]).length >= 3) decisionsFromStart++;
             
             var newFrontier = [];
-            if (frontier[0].hasStatus(cellStatus.EAST)  && !cells[frontier[0].x + 1][frontier[0].y].hasStatus(86)) {
+            if (cells[frontier[0].x][frontier[0].y].hasStatus(cellStatus.EAST)  && !cells[frontier[0].x + 1][frontier[0].y].hasStatus(86)) {
                 newFrontier.push(cells[frontier[0].x + 1][frontier[0].y]);
                 cellValues[frontier[0].x + 1][frontier[0].y] = { distanceFromStart: distanceFromStart, decisionsFromStart: decisionsFromStart };
             }
-            if (frontier[0].hasStatus(cellStatus.NORTH) && !cells[frontier[0].x][frontier[0].y - 1].hasStatus(86)) {
+            if (cells[frontier[0].x][frontier[0].y].hasStatus(cellStatus.NORTH) && !cells[frontier[0].x][frontier[0].y - 1].hasStatus(86)) {
                 newFrontier.push(cells[frontier[0].x][frontier[0].y - 1]);
                 cellValues[frontier[0].x][frontier[0].y - 1] = { distanceFromStart: distanceFromStart, decisionsFromStart: decisionsFromStart };
             }
-            if (frontier[0].hasStatus(cellStatus.WEST)  && !cells[frontier[0].x - 1][frontier[0].y].hasStatus(86)) {
+            if (cells[frontier[0].x][frontier[0].y].hasStatus(cellStatus.WEST)  && !cells[frontier[0].x - 1][frontier[0].y].hasStatus(86)) {
                 newFrontier.push(cells[frontier[0].x - 1][frontier[0].y]);
                 cellValues[frontier[0].x - 1][frontier[0].y] = { distanceFromStart: distanceFromStart, decisionsFromStart: decisionsFromStart };
             }
-            if (frontier[0].hasStatus(cellStatus.SOUTH) && !cells[frontier[0].x][frontier[0].y + 1].hasStatus(86)) {
+            if (cells[frontier[0].x][frontier[0].y].hasStatus(cellStatus.SOUTH) && !cells[frontier[0].x][frontier[0].y + 1].hasStatus(86)) {
                 newFrontier.push(cells[frontier[0].x][frontier[0].y + 1]);
                 cellValues[frontier[0].x][frontier[0].y + 1] = { distanceFromStart: distanceFromStart, decisionsFromStart: decisionsFromStart };
             }
 
             cells[frontier[0].x][frontier[0].y].status.push(86);
 
-            frontier.shift();
+           frontier.shift();
 
             newFrontier.forEach(nf => frontier.unshift(nf));
         }
@@ -236,7 +241,6 @@ function Maze() {
         var currentDecisions = 0;
         var currentDistance = 0;
 
-        // TODO: fix rows/columns issue
         for (var i = 0; i < 8; i++) {
             if (cellValues[i][7].decisionsFromStart > currentDecisions) {
                 currentDecisions = cellValues[i][7].decisionsFromStart;
@@ -255,6 +259,7 @@ function Maze() {
         cellValues[startCell.x][startCell.y] = { distanceFromStart: "#", decisionsFromStart: "#" };
         cellValues[bestCell.x][bestCell.y] = { distanceFromStart: "#", decisionsFromStart: "#" };
 
+        /*
         for (var i = 0; i < rowCount; i++) {
             var toLog = "";
             for (var j = 0; j < columnCount; j++) {
@@ -270,6 +275,7 @@ function Maze() {
             }
             console.log(toLog);
         }
+        */
     }
     
     const getNeighbors = function (cell) {

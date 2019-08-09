@@ -8,7 +8,9 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
     var prevDirection = cellStatus.SOUTH;
     var stepsTaken = 0;
 
-    window.addEventListener('mazeReady', function() { 
+    window.addEventListener('mazeReady', function() {
+        x = _maze.startCell().x;
+        y = _maze.startCell().y;
         _maze.markCell(x, y, cellStatus.STEPPED);
         render();
         toggleControls();
@@ -51,8 +53,6 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
             return;
         }
 
-        stepsTaken++;
-
         var direction;
 
         switch(_aiType) {
@@ -92,6 +92,8 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
         
         _maze.markCell(x, y, cellStatus.STEPPED);
 
+        stepsTaken++;
+
         if (_aiSpeed === aiSpeeds.TELEPORT){
             try {
                 logicLoop();
@@ -114,7 +116,7 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
 
         var direction = neighbors[Math.floor(Math.random() * neighbors.length)];
 
-        if (neighbors.length === 1) prevDirection = opposite(prevDirection);
+        if (neighbors.length === 1 && stepsTaken > 0) prevDirection = opposite(prevDirection);
 
         while (direction === opposite(prevDirection)) {
             direction = neighbors[Math.floor(Math.random() * neighbors.length)];
