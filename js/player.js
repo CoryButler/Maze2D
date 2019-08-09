@@ -1,26 +1,39 @@
 function Player(maze, id) {
-    var t = this;
-    var _id = id;
     var _maze = maze;
+    var _id = id;
     var controlsEnabled = false;
     var stepsTaken = 0;
 
-    window.addEventListener('mazeReady', function() { 
-        _maze.markCell(x, y, cellStatus.STEPPED);
-        toggleControls(); }
-    );
+    window.addEventListener('mazeReady', function() {
+        toggleControls();
+        render(); 
+    });
 
-    var canvas = document.getElementsByTagName("canvas")[0];
+    var cells = _maze.cells().slice();
 
+    var canvasTrail = document.createElement("canvas");
+    canvasTrail.width = _maze.width();
+    canvasTrail.height = _maze.height();
+    document.getElementsByTagName("body")[0].appendChild(canvasTrail);
+
+    var canvas = document.createElement("canvas");
+    canvas.width = _maze.width();
+    canvas.height = _maze.height();
+    document.getElementsByTagName("body")[0].appendChild(canvas);
+    
     var context = canvas.getContext("2d");
+    var contextTrail = canvasTrail.getContext("2d");
 
     var x = _maze.startCell().x;
     var y = _maze.startCell().y;
     
     var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'grey'];
-    var spriteColor = "pink";
+    var spriteColor = colors[Math.floor(Math.random() * colors.length)];
+    contextTrail.fillStyle = spriteColor;
 
     this.spriteColor = () => { return spriteColor; }
+    this.canvasSprite = () => { return canvas; }
+    this.canvasTrail = () => { return canvasTrail; }
 
     var handler = function(key) {
         if (!controlsEnabled) return;
@@ -45,8 +58,6 @@ function Player(maze, id) {
         
         if (x !== prevX || y !== prevY) stepsTaken++;
         
-        _maze.markCell(x, y, cellStatus.STEPPED);
-
         if (reachedGoal()) {
             alert("You did it!\n\nGood job.\n\nYou took " + stepsTaken + " steps.");
             toggleControls();
@@ -82,13 +93,15 @@ function Player(maze, id) {
     }
 
     const playerCell = function() {
-        return _maze.cells()[x][y];
+        return cells[x][y];
     }
 
     this.render = () => { render(); }
     const render = function() {
         if (!controlsEnabled) return;
         
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
         var screenSpaceX = toScreenSpace(x);
         var screenSpaceY = toScreenSpace(y);
 
@@ -109,6 +122,8 @@ function Player(maze, id) {
         context.beginPath();
         context.arc(screenSpaceX + _maze.cellWidth() * 0.65, screenSpaceY + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
         context.stroke();
+
+        contextTrail.fillRect(screenSpaceX + _maze.wallWidth() * 2, screenSpaceY + _maze.wallWidth() * 2, _maze.cellWidth() - _maze.wallWidth() * 4, _maze.cellWidth() - _maze.wallWidth() * 4);
     }
 
     const toScreenSpace = function(n)  {

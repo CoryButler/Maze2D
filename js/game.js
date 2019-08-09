@@ -2,11 +2,11 @@ function Game() {
     var layerManager = new LayerManager();
     var maze = new Maze();
     var players = [
-        //new Player(maze, 1),
-        //new Player(maze, 2)
+        new Player(maze, 1),
+        new Player(maze, 2)
         // new Ai(maze, aiTypes.RANDOM_TURNS, aiSpeeds.FAST),
-        new Ai(maze, aiTypes.UNVISITED_TURNS, aiSpeeds.FAST),
-        new Ai(maze, aiTypes.UNVISITED_TURNS, aiSpeeds.FAST)
+        // new Ai(maze, aiTypes.UNVISITED_TURNS, aiSpeeds.FAST),
+        // new Ai(maze, aiTypes.UNVISITED_TURNS, aiSpeeds.FAST)
     ];
 
     players.forEach(player => {
