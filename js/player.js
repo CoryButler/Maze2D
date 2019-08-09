@@ -57,8 +57,9 @@ function Player(maze, id) {
         if (x !== prevX || y !== prevY) stepsTaken++;
         
         if (reachedGoal()) {
-            alert("You did it!\n\nGood job.\n\nYou took " + stepsTaken + " steps.");
+            render();
             toggleControls();
+            alert("You did it!\n\nGood job.\n\nYou took " + stepsTaken + " steps.");
         }
     }
 

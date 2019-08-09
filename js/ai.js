@@ -40,6 +40,20 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
     this.spriteColor = () => { return spriteColor; }
     this.canvasSprite = () => { return canvas; }
     this.canvasTrail = () => { return canvasTrail; }
+
+    const modulo = (n, m) => {
+        return ((n % m) + m) % m;
+    }
+    
+    const invertJson = (input) => {
+        var one, output = {};
+        for (one in input) {
+            if (input.hasOwnProperty(one)) {
+                output[input[one]] = one;
+            }
+        }
+        return output;
+    }
     
     var logicLoop = function() {
         if (!controlsEnabled) return;

@@ -241,14 +241,14 @@ function Maze() {
         var currentDecisions = 0;
         var currentDistance = 0;
 
-        for (var i = 0; i < 8; i++) {
-            if (cellValues[i][7].decisionsFromStart > currentDecisions) {
-                currentDecisions = cellValues[i][7].decisionsFromStart;
-                currentDistance = cellValues[i][7].distanceFromStart;
+        for (var i = 0; i < rowCount; i++) {
+            if (cellValues[i][rowCount - 1].decisionsFromStart > currentDecisions) {
+                currentDecisions = cellValues[i][rowCount - 1].decisionsFromStart;
+                currentDistance = cellValues[i][rowCount - 1].distanceFromStart;
                 bestCell.x = i;
             }
-            else if (cellValues[i][7].decisionsFromStart === currentDecisions && cellValues[i][7].distanceFromStart > currentDistance) {
-                currentDistance = cellValues[i][7].distanceFromStart;
+            else if (cellValues[i][rowCount - 1].decisionsFromStart === currentDecisions && cellValues[i][rowCount - 1].distanceFromStart > currentDistance) {
+                currentDistance = cellValues[i][rowCount - 1].distanceFromStart;
                 bestCell.x = i;
             }
         }
