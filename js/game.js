@@ -5,7 +5,7 @@ function Game() {
         new Player(maze, 1),
         new Player(maze, 2)
         // new Ai(maze, aiTypes.RANDOM_TURNS, aiSpeeds.FAST),
-        , new Ai(maze, aiTypes.LEFT_HAND, aiSpeeds.FAST),
+        //, new Ai(maze, aiTypes.LEFT_HAND, aiSpeeds.FAST),
         // new Ai(maze, aiTypes.UNVISITED_TURNS, aiSpeeds.FAST)
     ];
 
@@ -14,7 +14,7 @@ function Game() {
         layerManager.addSprite(player.canvasSprite());
     })
 
-    //players.forEach(player => { player.setColor(); });
+    players.forEach(player => { player.setColor(); });
     maze.create(players[0].spriteColor(), true);
 
     const renderLoop = function() {

@@ -80,6 +80,7 @@ function Player(maze, id) {
                     spriteColor = "#00CC00";
                     break;
             }
+			contextTrail.fillStyle = spriteColor;
         }
     }
 

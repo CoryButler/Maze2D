@@ -18,8 +18,8 @@ function Maze() {
 
     var cellWidth = 28;
     var wallWidth = 4;
-    var columnCount = getUrlVars()['w'] !== undefined ? getUrlVars()['w'] : 16;
-    var rowCount = getUrlVars()['h'] !== undefined ? getUrlVars()['h'] : 16;
+    var columnCount = getUrlVars()['w'] !== undefined ? getUrlVars()['w'] : 10;
+    var rowCount = getUrlVars()['h'] !== undefined ? getUrlVars()['h'] : 10;
     var width = columnCount * (cellWidth + wallWidth) + wallWidth;
     var height = rowCount * (cellWidth + wallWidth) + wallWidth;
     var cells = [];
