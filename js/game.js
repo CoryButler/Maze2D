@@ -4,17 +4,18 @@ function Game() {
     var players = [
         new Player(maze, 1),
         new Player(maze, 2)
-        // new Ai(maze, aiTypes.RANDOM_TURNS, aiSpeeds.FAST),
-        //, new Ai(maze, aiTypes.LEFT_HAND, aiSpeeds.FAST),
-        // new Ai(maze, aiTypes.UNVISITED_TURNS, aiSpeeds.FAST)
     ];
 
     players.forEach(player => {
         layerManager.addTrail(player.canvasTrail());
         layerManager.addSprite(player.canvasSprite());
-    })
+    });
 
-    players.forEach(player => { player.setColor(); });
+    for (var i = 0; i < players.length; i++) {
+        var dropdown = document.getElementById("player" + (i + 1) + "_color");
+        var selected = dropdown.options[dropdown.selectedIndex].value;
+        players[i].forceColor(selected);
+    }
     maze.create(players[0].spriteColor(), true);
 
     const renderLoop = function() {
@@ -24,4 +25,27 @@ function Game() {
     }
 
     renderLoop();
+
+    this.start = () => {
+        layerManager.clearLayers();
+        maze = new Maze();
+        players = [];
+        players = [
+            new Player(maze, 1),
+            new Player(maze, 2)
+        ];
+
+        for (var i = 0; i < players.length; i++) {
+            var dropdown = document.getElementById("player" + (i + 1) + "_color");
+            var selected = dropdown.options[dropdown.selectedIndex].value;
+            players[i].forceColor(selected);
+        }
+
+        players.forEach(player => {
+            layerManager.addTrail(player.canvasTrail());
+            layerManager.addSprite(player.canvasSprite());
+        });
+
+        maze.create(players[0].spriteColor(), true);
+    }
 }

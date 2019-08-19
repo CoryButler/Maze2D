@@ -207,6 +207,8 @@ function Maze() {
                 frontier.shift();
                 continue;
             }
+
+            // TODO: distance and decision are always 0
             
             var distanceFromStart = cellValues[frontier[0].x][frontier[0].y].distanceFromStart + 1;
             var decisionsFromStart = cellValues[frontier[0].x][frontier[0].y].decisionsFromStart;
@@ -242,14 +244,17 @@ function Maze() {
         var currentDistance = 0;
 
         for (var i = 0; i < rowCount; i++) {
+            var temp = cellValues[i][rowCount - 1].decisionsFromStart;
             if (cellValues[i][rowCount - 1].decisionsFromStart > currentDecisions) {
                 currentDecisions = cellValues[i][rowCount - 1].decisionsFromStart;
                 currentDistance = cellValues[i][rowCount - 1].distanceFromStart;
                 bestCell.x = i;
+                console.log("blip");
             }
             else if (cellValues[i][rowCount - 1].decisionsFromStart === currentDecisions && cellValues[i][rowCount - 1].distanceFromStart > currentDistance) {
                 currentDistance = cellValues[i][rowCount - 1].distanceFromStart;
                 bestCell.x = i;
+                console.log("bloop");
             }
         }
 

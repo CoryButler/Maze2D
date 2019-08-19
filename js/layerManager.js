@@ -20,6 +20,18 @@ function LayerManager () {
         }
     }
 
+    this.clearLayers = () => {
+        _trailLayers.forEach(tLayer => {
+            document.body.removeChild(tLayer);
+        });
+        _trailLayers = [];
+        
+        _spriteLayers.forEach(sLayer => {
+            document.body.removeChild(sLayer);
+        });
+        _spriteLayers = [];
+    }
+
     const cycleLayers = function () {
         if (!_isCycling) return;
 

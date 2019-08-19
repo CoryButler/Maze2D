@@ -65,6 +65,19 @@ function Player(maze, id) {
 
     document.addEventListener("keyup", handler);
 
+    this.forceColor = (color) => {
+        spriteColor = color;
+        switch (spriteColor) {
+            case "pink":
+                spriteColor = "#FF3399";
+                break;
+            case "green":
+                spriteColor = "#00CC00";
+                break;
+        }
+        contextTrail.fillStyle = spriteColor;
+    }
+
     this.setColor = function (pretext) {
         if (pretext === undefined) pretext = "";
         spriteColor = prompt(pretext + "What color do you want to be?", "pink").toLowerCase();

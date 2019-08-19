@@ -14,6 +14,29 @@
     </head>
     <body>
         <canvas></canvas>
+        <label for="player1_color">Player 1</label>
+        <select id="player1_color" style="margin-right: 16px;">
+            <option value="red" style="background-color: red;">Red</option>
+            <option value="orange" style="background-color: orange;">Orange</option>
+            <option value="yellow" style="background-color: yellow;">Yellow</option>
+            <option value="green" style="background-color: #00CC00;" selected>Green</option>
+            <option value="blue" style="background-color: blue;">Blue</option>
+            <option value="purple" style="background-color: purple;">Purple</option>
+            <option value="pink" style="background-color: #FF3399;">Pink</option>
+        </select>
+        <label for="player2_color">Player 2</label>
+        <select id="player2_color" style="margin-right: 16px;">
+            <option value="red" style="background-color: red;">Red</option>
+            <option value="orange" style="background-color: orange;">Orange</option>
+            <option value="yellow" style="background-color: yellow;">Yellow</option>
+            <option value="green" style="background-color: #00CC00;">Green</option>
+            <option value="blue" style="background-color: blue;">Blue</option>
+            <option value="purple" style="background-color: purple;">Purple</option>
+            <option value="pink" style="background-color: #FF3399;" selected>Pink</option>
+        </select>
+        <br>
+        <br>
         <script type="text/javascript" src="js/main.js"></script>
+        <button onclick="game.start();">New Game</button>
     </body>
 </html>
