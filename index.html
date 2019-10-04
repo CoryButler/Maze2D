@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Maze Generator</title>
+        <title>Mazes</title>
         <meta charset="utf-8">
         <link rel="stylesheet" href="css/style.css" />
         <script type="text/javascript" src="js/random.js"></script>
@@ -15,29 +15,98 @@
     </head>
     <body>
         <canvas></canvas>
-        <label for="player1_color">Player 1</label>
-        <select id="player1_color" style="margin-right: 16px;">
-            <option value="red" style="background-color: red;">Red</option>
-            <option value="orange" style="background-color: orange;">Orange</option>
-            <option value="yellow" style="background-color: yellow;">Yellow</option>
-            <option value="green" style="background-color: #00CC00;" selected>Green</option>
-            <option value="blue" style="background-color: blue;">Blue</option>
-            <option value="purple" style="background-color: purple;">Purple</option>
-            <option value="pink" style="background-color: #FF3399;">Pink</option>
-        </select>
-        <label for="player2_color">Player 2</label>
-        <select id="player2_color" style="margin-right: 16px;">
-            <option value="red" style="background-color: red;">Red</option>
-            <option value="orange" style="background-color: orange;">Orange</option>
-            <option value="yellow" style="background-color: yellow;">Yellow</option>
-            <option value="green" style="background-color: #00CC00;">Green</option>
-            <option value="blue" style="background-color: blue;">Blue</option>
-            <option value="purple" style="background-color: purple;">Purple</option>
-            <option value="pink" style="background-color: #FF3399;" selected>Pink</option>
-        </select>
-        <br>
-        <br>
+        <form>
+            <input id="animate" type="checkbox" checked />
+            <label for="player1_color">Player 1</label>
+            <select id="player1_color" style="margin-right: 16px;">
+                <option value="red" style="background-color: red;">Red</option>
+                <option value="orange" style="background-color: orange;">Orange</option>
+                <option value="yellow" style="background-color: yellow;">Yellow</option>
+                <option value="green" style="background-color: #00CC00;" selected>Green</option>
+                <option value="blue" style="background-color: blue;">Blue</option>
+                <option value="purple" style="background-color: purple;">Purple</option>
+                <option value="pink" style="background-color: #FF3399;">Pink</option>
+            </select>
+            <br>
+            <input id="animate" type="checkbox" checked />
+            <label for="player2_color">Player 2</label>
+            <select id="player2_color" style="margin-right: 16px;">
+                <option value="red" style="background-color: red;">Red</option>
+                <option value="orange" style="background-color: orange;">Orange</option>
+                <option value="yellow" style="background-color: yellow;">Yellow</option>
+                <option value="green" style="background-color: #00CC00;">Green</option>
+                <option value="blue" style="background-color: blue;">Blue</option>
+                <option value="purple" style="background-color: purple;">Purple</option>
+                <option value="pink" style="background-color: #FF3399;" selected>Pink</option>
+            </select>
+            <br>
+            <input id="animate" type="checkbox" checked />
+            <label for="player2_color">AI Random</label>
+            <select id="player2_color" style="margin-right: 16px;">
+                <option value="red" style="background-color: red;">Red</option>
+                <option value="orange" style="background-color: orange;">Orange</option>
+                <option value="yellow" style="background-color: yellow;">Yellow</option>
+                <option value="green" style="background-color: #00CC00;">Green</option>
+                <option value="blue" style="background-color: blue;">Blue</option>
+                <option value="purple" style="background-color: purple;">Purple</option>
+                <option value="pink" style="background-color: #FF3399;" selected>Pink</option>
+            </select>
+            <br>
+            <input id="animate" type="checkbox" checked />
+            <label for="player2_color">AI Random Turns</label>
+            <select id="player2_color" style="margin-right: 16px;">
+                <option value="red" style="background-color: red;">Red</option>
+                <option value="orange" style="background-color: orange;">Orange</option>
+                <option value="yellow" style="background-color: yellow;">Yellow</option>
+                <option value="green" style="background-color: #00CC00;">Green</option>
+                <option value="blue" style="background-color: blue;">Blue</option>
+                <option value="purple" style="background-color: purple;">Purple</option>
+                <option value="pink" style="background-color: #FF3399;" selected>Pink</option>
+            </select>
+            <br>
+            <input id="animate" type="checkbox" checked />
+            <label for="player2_color">AI Unvisited Turns</label>
+            <select id="player2_color" style="margin-right: 16px;">
+                <option value="red" style="background-color: red;">Red</option>
+                <option value="orange" style="background-color: orange;">Orange</option>
+                <option value="yellow" style="background-color: yellow;">Yellow</option>
+                <option value="green" style="background-color: #00CC00;">Green</option>
+                <option value="blue" style="background-color: blue;">Blue</option>
+                <option value="purple" style="background-color: purple;">Purple</option>
+                <option value="pink" style="background-color: #FF3399;" selected>Pink</option>
+            </select>
+            <br>
+            <input id="animate" type="checkbox" checked />
+            <label for="player2_color">AI Right Hand 2</label>
+            <select id="player2_color" style="margin-right: 16px;">
+                <option value="red" style="background-color: red;">Red</option>
+                <option value="orange" style="background-color: orange;">Orange</option>
+                <option value="yellow" style="background-color: yellow;">Yellow</option>
+                <option value="green" style="background-color: #00CC00;">Green</option>
+                <option value="blue" style="background-color: blue;">Blue</option>
+                <option value="purple" style="background-color: purple;">Purple</option>
+                <option value="pink" style="background-color: #FF3399;" selected>Pink</option>
+            </select>
+            <br>
+            <input id="animate" type="checkbox" checked />
+            <label for="player2_color">AI Left Hand</label>
+            <select id="player2_color" style="margin-right: 16px;">
+                <option value="red" style="background-color: red;">Red</option>
+                <option value="orange" style="background-color: orange;">Orange</option>
+                <option value="yellow" style="background-color: yellow;">Yellow</option>
+                <option value="green" style="background-color: #00CC00;">Green</option>
+                <option value="blue" style="background-color: blue;">Blue</option>
+                <option value="purple" style="background-color: purple;">Purple</option>
+                <option value="pink" style="background-color: #FF3399;" selected>Pink</option>
+            </select>
+            <br>
+            <br>
+            <input id="animate" type="checkbox" checked />
+            <label for="animate">Animate maze creation</label>
+            <br>
+            <br>
+            <button onclick="game.start();">New Game</button>
+        </form>
         <script type="text/javascript" src="js/main.js"></script>
-        <button onclick="game.start();">New Game</button>
     </body>
 </html>

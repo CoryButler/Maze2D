@@ -2,8 +2,8 @@ function Game() {
     var layerManager = new LayerManager();
     var maze = new Maze();
     var players = [
-        new Player(maze, 1),
-        new Player(maze, 2)
+        //new Player(maze, 1),
+        //new Player(maze, 2)
     ];
 
     players.forEach(player => {
@@ -16,7 +16,7 @@ function Game() {
         var selected = dropdown.options[dropdown.selectedIndex].value;
         players[i].forceColor(selected);
     }
-    maze.create(players[0].spriteColor(), true);
+    maze.create('green', false);//players[0].spriteColor(), true);
 
     const renderLoop = function() {
         maze.render();
