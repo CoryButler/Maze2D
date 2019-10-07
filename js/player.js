@@ -27,8 +27,7 @@ function Player(maze, id) {
     var x = _maze.startCell().x;
     var y = _maze.startCell().y;
     
-    var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'grey'];
-    var spriteColor = colors[Math.floor(Math.random() * colors.length)];
+    var spriteColor = playerColors[Math.floor(Math.random() * playerColors.length)];
     contextTrail.fillStyle = spriteColor;
 
     this.spriteColor = () => { return spriteColor; }
@@ -81,7 +80,7 @@ function Player(maze, id) {
     this.setColor = function (pretext) {
         if (pretext === undefined) pretext = "";
         spriteColor = prompt(pretext + "What color do you want to be?", "pink").toLowerCase();
-        if (!colors.some(c => c === spriteColor)) {
+        if (!playerColors.some(c => c === spriteColor)) {
             this.setColor("Sorry, you cannot be " + spriteColor + ".\n");
         }
         else {

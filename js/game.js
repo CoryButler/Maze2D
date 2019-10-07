@@ -1,4 +1,6 @@
 function Game() {
+    new Menu();
+
     var layerManager = new LayerManager();
     var maze = new Maze();
     var players = [

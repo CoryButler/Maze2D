@@ -1,4 +1,4 @@
-const aiTypes = { RANDOM: 0, RANDOM_TURNS: 1, UNVISITED_TURNS: 2, RIGHT_HAND: 3, LEFT_HAND: 4, DIJKSTRA: 5, A_STAR: 6 };
+const aiTypes = { PLAYER_1: 0, PLAYER_2: 1, RANDOM: 2, RANDOM_TURNS: 3, UNVISITED_TURNS: 4, RIGHT_HAND: 5, LEFT_HAND: 6 };
 const aiSpeeds = { VERY_SLOW: 2000, SLOW: 1000, NORMAL: 500, FAST: 250, VERY_FAST: 125, SUPER_FAST: 1, TELEPORT: 0 };
 
 function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) {
@@ -33,8 +33,7 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
     var x = _maze.startCell().x;
     var y = _maze.startCell().y;
     
-    var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'grey'];
-    var spriteColor = colors[Math.floor(Math.random() * colors.length)];
+    var spriteColor = playerColors[Math.floor(Math.random() * playerColors.length)];
     contextTrail.fillStyle = spriteColor;
 
     this.spriteColor = () => { return spriteColor; }
@@ -237,7 +236,7 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
     this.setColor = function (pretext) {
         if (pretext === undefined) pretext = "";
         spriteColor = prompt(pretext + "What color do you want to be?", "pink").toLowerCase();
-        if (!colors.some(c => c === spriteColor)) {
+        if (!playerColors.some(c => c === spriteColor)) {
             this.setColor("Sorry, you cannot be " + spriteColor + ".\n");
         }
         else {
