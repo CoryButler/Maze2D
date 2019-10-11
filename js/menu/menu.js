@@ -1,23 +1,17 @@
-function Menu () {
+function Menu (settings) {
     const body = document.getElementsByTagName("body")[0];
     const form = document.createElement("form");
     const header = document.createElement("h1");
-    const checkbox = document.createElement("input");
-    const label = document.createElement("label");
     const newGame = document.createElement("button");
     const cancel = document.createElement("button");
+    const playerSettings = document.createElement("div");
 
-    header.style = "text-align: center; padding: 0px 20px";
-    header.innerHTML = "Maze Options";
+    header.style = "text-align: center; padding: 0px; width: 100%; background-color: grey; color: white";
+    header.innerHTML = "Maze Settings";
 
-    checkbox.type = "checkbox";
-    checkbox.id = "animateMazeCreation";
-    checkbox.checked = true;
+    playerSettings.style = "border: 1px solid grey; border-radius: 4px; padding: 16px 0px 0px 8px; float: left; margin-right: 8px";
 
-    label.for = checkbox.id;
-    label.innerHTML = "Animate maze creation";
-
-    newGame.onclick = () => { closeMenu(); game.start(); }
+    newGame.onclick = () => { closeMenu(); new Game(settings); }
     newGame.innerHTML = "New Game";
 
     cancel.style = "float: right";
@@ -26,14 +20,14 @@ function Menu () {
 
     form.appendChild(header);
     
-    for (let prop in aiTypes) { new PlayerButton(prop, form); }
+    for (let prop in aiTypes) { new PlayerButton(prop, playerSettings); }
 
-    form.appendChild(checkbox);
-    form.appendChild(label);
+    form.appendChild(playerSettings);
+    new Menu_MazeSettings(form);
     form.appendChild(document.createElement("br"));
     form.appendChild(document.createElement("br"));
     form.appendChild(newGame);
-    form.appendChild(cancel);
+    if (document.getElementsByTagName("canvas").length > 0) form.appendChild(cancel);
     body.appendChild(form);
 
     const closeMenu = () =>  {

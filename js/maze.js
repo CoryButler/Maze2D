@@ -43,7 +43,8 @@ function Maze() {
 
     cells[initPos.x][initPos.y].status.push(cellStatus.VISITED);
 
-    var canvas = document.getElementsByTagName("canvas")[0];
+    var canvas = document.createElement("canvas");
+    document.getElementsByTagName("body")[0].appendChild(canvas);
     canvas.width = width;
     canvas.height = height;
 

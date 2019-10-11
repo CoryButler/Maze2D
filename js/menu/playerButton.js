@@ -12,7 +12,7 @@ function PlayerButton (aiType, parent) {
     checkbox.id = "checkbox_" + aiType;
 
     dropdown.id = "selct_" + aiType;
-    dropdown.style = "margin-right: 16px; float: right";
+    dropdown.style = "margin: 0px 16px; float: right";
 
     label.for = dropdown.id;
     label.style = "font-size: 0.8em";

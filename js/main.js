@@ -1,1 +1,3 @@
-let game = new Game();
+
+    let settings = new Settings();
+    new Menu(settings);
