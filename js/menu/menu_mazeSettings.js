@@ -1,4 +1,4 @@
-function Menu_MazeSettings (parent) {
+function Menu_MazeSettings (parent, settings) {
     const mazeSettings = document.createElement("div");
     const inputWidth = document.createElement("input");
     const inputHeight = document.createElement("input");
@@ -12,6 +12,9 @@ function Menu_MazeSettings (parent) {
     inputWidth.style =  "float: right; width: 64px; margin-left: 16px";
     inputHeight.style = "float: right; width: 64px; margin-left: 16px";
 
+    inputWidth.value = settings.width;
+    inputHeight.value = settings.height;
+
     label_inputWidth.for = inputWidth.id;
     label_inputWidth.innerHTML = "Width (in cells)";
 
@@ -23,7 +26,7 @@ function Menu_MazeSettings (parent) {
 
     checkbox.type = "checkbox";
     checkbox.id = "animateMazeCreation";
-    checkbox.checked = true;
+    checkbox.checked = settings.animate;
 
     mazeSettings.appendChild(label_inputWidth);
     mazeSettings.appendChild(inputWidth);

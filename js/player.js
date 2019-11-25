@@ -37,16 +37,18 @@ function Player(maze, id) {
     var handler = function(key) {
         if (!controlsEnabled) return;
 
+        console.log(key.code)
+
         var prevX = x;
         var prevY = y;
 
-        if (_id === 1 || _id === undefined) {
+        if (_id === aiTypes.PLAYER_1 || _id === undefined) {
             if (key.key === 'w' && playerCell().hasStatus(cellStatus.NORTH)) y -= 1;
             if (key.key === 'a' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
             if (key.key === 's' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;
             if (key.key === 'd' && playerCell().hasStatus(cellStatus.EAST)) x += 1;
         }
-        if (_id === 2 || _id === undefined) {
+        if (_id === aiTypes.PLAYER_2 || _id === undefined) {
             if (key.key === 'ArrowUp' && playerCell().hasStatus(cellStatus.NORTH)) y -= 1;
             if (key.key === 'ArrowLeft' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
             if (key.key === 'ArrowDown' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;

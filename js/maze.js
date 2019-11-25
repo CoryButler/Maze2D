@@ -1,14 +1,6 @@
-function Maze() {
-    const getUrlVars = function() {
-        var vars = {};
-        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-            vars[key] = value;
-        });
-        return vars;
-    }
-
-    var mazeReady = new Event('mazeReady');
-    var doNotRender = false;
+function Maze(width = 32, height = 16, cellWidth = 14, wallWidth = 2) {
+    let mazeReady = new Event('mazeReady');
+    let doNotRender = false;
     window.addEventListener('mazeReady', function() { 
         setEndCell();
         render();
@@ -16,50 +8,50 @@ function Maze() {
       }
     );
 
-    var cellWidth = 8;
-    var wallWidth = 1;
-    var columnCount = getUrlVars()['w'] !== undefined ? getUrlVars()['w'] : 32;
-    var rowCount = getUrlVars()['h'] !== undefined ? getUrlVars()['h'] : 16;
-    var width = columnCount * (cellWidth + wallWidth) + wallWidth;
-    var height = rowCount * (cellWidth + wallWidth) + wallWidth;
-    var cells = [];
-    var cellStack = [];
-    var visitedCellCount = 0;
+    let _cellWidth = cellWidth;
+    let _wallWidth = wallWidth;
+    let columnCount = width;
+    let rowCount = height;
+    let _width = columnCount * (_cellWidth + _wallWidth) + _wallWidth;
+    let _height = rowCount * (_cellWidth + _wallWidth) + _wallWidth;
+    let cells = [];
+    let cellStack = [];
+    let visitedCellCount = 0;
 
-    for (var i = 0; i < columnCount; i++) {
+    for (let i = 0; i < columnCount; i++) {
         cells.push([]);
-        for (var j = 0; j < rowCount; j++) {
+        for (let j = 0; j < rowCount; j++) {
             cells[i].push(new MazeCell());
         }
     }
 
-    var startCell = {x: Math.floor(Math.random() * columnCount), y: 0};
-    var endCell = {x: 0, y: 0};
+    let startCell = {x: Math.floor(Math.random() * columnCount), y: 0};
+    let endCell = {x: 0, y: 0};
     cells[startCell.x][startCell.y].status.push(cellStatus.START);
 
-    var initPos = { x: Math.floor(Math.random() * columnCount), y: Math.floor(Math.random() * rowCount) };
+    let initPos = { x: Math.floor(Math.random() * columnCount), y: Math.floor(Math.random() * rowCount) };
     cellStack.push(initPos);
     visitedCellCount++;
 
     cells[initPos.x][initPos.y].status.push(cellStatus.VISITED);
 
-    var canvas = document.createElement("canvas");
+    let canvas = document.createElement("canvas");
     document.getElementsByTagName("body")[0].appendChild(canvas);
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = _width;
+    canvas.height = _height;
 
-    var context = canvas.getContext("2d");
+    let context = canvas.getContext("2d");
 
-    this.width = () => { return width; }
-    this.height = () => { return height; }
+    this.width = () => { return _width; }
+    this.height = () => { return _height; }
     this.cells = () => { return cells; }
-    this.cellWidth = () => { return cellWidth; }
-    this.wallWidth = () => { return wallWidth; }
+    this.cellWidth = () => { return _cellWidth; }
+    this.wallWidth = () => { return _wallWidth; }
     this.startCell = () => { return startCell; }
     this.columnCount = () => { return columnCount; }
     this.rowCount = () => { return rowCount; }
 
-    var spriteColor;
+    let spriteColor;
 
     this.create = function(color, animate = true) {
         spriteColor = color;
@@ -71,7 +63,7 @@ function Maze() {
 
     const createInstant = function() {
         while (visitedCellCount < columnCount * rowCount) {
-            var neighbors = [];
+            let neighbors = [];
     
             if (cellStack[cellStack.length - 1].y > 0 && !cells[offsetX(0)][offsetY(-1)].hasStatus(cellStatus.VISITED))
                 neighbors.push(cellStatus.NORTH);
@@ -86,7 +78,7 @@ function Maze() {
                 neighbors.push(cellStatus.EAST);
     
             if (neighbors.length > 0) {
-                var nextCell = neighbors[Math.floor(Math.random() * neighbors.length)];
+                let nextCell = neighbors[Math.floor(Math.random() * neighbors.length)];
     
                 switch (nextCell) {
                     case cellStatus.NORTH:
@@ -126,7 +118,7 @@ function Maze() {
 
     const createAnimate = function() {
         if (visitedCellCount < columnCount * rowCount) {
-            var neighbors = [];
+            let neighbors = [];
     
             if (cellStack[cellStack.length - 1].y > 0 && !cells[offsetX(0)][offsetY(-1)].hasStatus(cellStatus.VISITED))
                 neighbors.push(cellStatus.NORTH);
@@ -141,7 +133,7 @@ function Maze() {
                 neighbors.push(cellStatus.EAST);
     
             if (neighbors.length > 0) {
-                var nextCell = neighbors[Math.floor(Math.random() * neighbors.length)];
+                let nextCell = neighbors[Math.floor(Math.random() * neighbors.length)];
     
                 switch (nextCell) {
                     case cellStatus.NORTH:
@@ -167,6 +159,8 @@ function Maze() {
                 }
     
                 cells[offsetX(0)][offsetY(0)].status.push(cellStatus.VISITED);
+                cells[offsetX(0)][offsetY(0)].x = offsetX(0);
+                cells[offsetX(0)][offsetY(0)].y = offsetY(0);
                 visitedCellCount++;
             }
             else {
@@ -190,32 +184,33 @@ function Maze() {
     }
 
     const setEndCell = function () {
-        var cellValues = [];
-        var currentX = startCell.x;
-        var currentY = startCell.y;
+        let cellValues = [];
+        let currentX = startCell.x;
+        let currentY = startCell.y;
 
-        for (var i = 0; i < columnCount; i++) {
+        for (let i = 0; i < columnCount; i++) {
             cellValues.push([]);
-            for (var j = 0; j < rowCount; j++) {
-                cellValues[i].push({ distanceFromStart: 0, decisionsFromStart: 0 });
+            for (let j = 0; j < rowCount; j++) {
+                cellValues[i].push({});
             }
         }
 
+        cellValues[currentX][currentY].distanceFromStart = 0;
+        cellValues[currentX][currentY].decisionsFromStart = 0;
 
-        var frontier = [cells[currentX][currentY]];
+
+        let frontier = [cells[currentX][currentY]];
         while (frontier.length > 0) {
             if (cells[frontier[0].x][frontier[0].y].hasStatus(86)) {
                 frontier.shift();
                 continue;
             }
-
-            // TODO: distance and decision are always 0
             
-            var distanceFromStart = cellValues[frontier[0].x][frontier[0].y].distanceFromStart + 1;
-            var decisionsFromStart = cellValues[frontier[0].x][frontier[0].y].decisionsFromStart;
+            let distanceFromStart = cellValues[frontier[0].x][frontier[0].y].distanceFromStart + 1;
+            let decisionsFromStart = cellValues[frontier[0].x][frontier[0].y].decisionsFromStart;
             if (getNeighbors(frontier[0]).length >= 3) decisionsFromStart++;
             
-            var newFrontier = [];
+            let newFrontier = [];
             if (cells[frontier[0].x][frontier[0].y].hasStatus(cellStatus.EAST)  && !cells[frontier[0].x + 1][frontier[0].y].hasStatus(86)) {
                 newFrontier.push(cells[frontier[0].x + 1][frontier[0].y]);
                 cellValues[frontier[0].x + 1][frontier[0].y] = { distanceFromStart: distanceFromStart, decisionsFromStart: decisionsFromStart };
@@ -237,25 +232,26 @@ function Maze() {
 
            frontier.shift();
 
-            newFrontier.forEach(nf => frontier.unshift(nf));
+            newFrontier.forEach(nf => {
+                nf.distanceFromStart = distanceFromStart;
+                nf.decisionsFromStart = decisionsFromStart;
+                frontier.unshift(nf);
+            });
         }
 
-        var bestCell = { x: 0, y: rowCount - 1 };
-        var currentDecisions = 0;
-        var currentDistance = 0;
+        let bestCell = { x: 0, y: rowCount - 1 };
+        let currentDecisions = 0;
+        let currentDistance = 0;
 
-        for (var i = 0; i < rowCount; i++) {
-            var temp = cellValues[i][rowCount - 1].decisionsFromStart;
+        for (let i = 0; i < columnCount; i++) {
             if (cellValues[i][rowCount - 1].decisionsFromStart > currentDecisions) {
                 currentDecisions = cellValues[i][rowCount - 1].decisionsFromStart;
                 currentDistance = cellValues[i][rowCount - 1].distanceFromStart;
                 bestCell.x = i;
-                console.log("blip");
             }
             else if (cellValues[i][rowCount - 1].decisionsFromStart === currentDecisions && cellValues[i][rowCount - 1].distanceFromStart > currentDistance) {
                 currentDistance = cellValues[i][rowCount - 1].distanceFromStart;
                 bestCell.x = i;
-                console.log("bloop");
             }
         }
 
@@ -266,17 +262,17 @@ function Maze() {
         cellValues[startCell.x][startCell.y] = { distanceFromStart: "#", decisionsFromStart: "#" };
         cellValues[bestCell.x][bestCell.y] = { distanceFromStart: "#", decisionsFromStart: "#" };
 
-        for (var i = 0; i < rowCount; i++) {
-            var toLog = "";
-            for (var j = 0; j < columnCount; j++) {
+        for (let i = 0; i < rowCount; i++) {
+            let toLog = "";
+            for (let j = 0; j < columnCount; j++) {
                 toLog += cellValues[j][i].distanceFromStart + " ";
             }
             console.log(toLog);
         }
 
-        for (var i = 0; i < rowCount; i++) {
-            var toLog = "";
-            for (var j = 0; j < columnCount; j++) {
+        for (let i = 0; i < rowCount; i++) {
+            let toLog = "";
+            for (let j = 0; j < columnCount; j++) {
                 toLog += cellValues[j][i].decisionsFromStart + " ";
             }
             console.log(toLog);
@@ -285,7 +281,7 @@ function Maze() {
     }
     
     const getNeighbors = function (cell) {
-        var neighbors = [];
+        let neighbors = [];
         if (cell.hasStatus(cellStatus.EAST))  neighbors.push(cellStatus.EAST);
         if (cell.hasStatus(cellStatus.NORTH)) neighbors.push(cellStatus.NORTH);
         if (cell.hasStatus(cellStatus.WEST))  neighbors.push(cellStatus.WEST);
@@ -296,9 +292,9 @@ function Maze() {
     this.render = function() { if (!doNotRender) render(); }
     const render = function() {
         context.fillStyle = "#000000";
-        context.fillRect(0, 0, width, height);
-        for (var x = 0; x < columnCount; x++) {
-            for (var y = 0; y < rowCount; y++) {
+        context.fillRect(0, 0, _width, _height);
+        for (let x = 0; x < columnCount; x++) {
+            for (let y = 0; y < rowCount; y++) {
                 if (x === cellStack[cellStack.length - 1].x && y === cellStack[cellStack.length - 1].y && visitedCellCount < columnCount * rowCount) {
                     context.fillStyle = spriteColor;
                 }
@@ -309,19 +305,19 @@ function Maze() {
                     context.fillStyle = spriteColor;
                 }
                 
-                context.fillRect(x * (cellWidth + wallWidth) + wallWidth, y * (cellWidth + wallWidth) + wallWidth, cellWidth, cellWidth);
+                context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth, y * (_cellWidth + _wallWidth) + _wallWidth, _cellWidth, _cellWidth);
     
                 if (cells[x][y].hasStatus(cellStatus.SOUTH))
-                    context.fillRect(x * (cellWidth + wallWidth) + wallWidth, y * (cellWidth + wallWidth) + wallWidth + cellWidth, cellWidth, wallWidth);
+                    context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth, y * (_cellWidth + _wallWidth) + _wallWidth + _cellWidth, _cellWidth, _wallWidth);
                 
                 if (cells[x][y].hasStatus(cellStatus.EAST))
-                    context.fillRect(x * (cellWidth + wallWidth) + wallWidth + cellWidth, y * (cellWidth + wallWidth) + wallWidth, wallWidth, cellWidth);
+                    context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth + _cellWidth, y * (_cellWidth + _wallWidth) + _wallWidth, _wallWidth, _cellWidth);
 
                 if (cells[x][y].hasStatus(cellStatus.VISITED) && cells[x][y].hasStatus(cellStatus.START))
-                    context.fillRect(x * (cellWidth + wallWidth) + wallWidth, y * (cellWidth + wallWidth), cellWidth, wallWidth);
+                    context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth, y * (_cellWidth + _wallWidth), _cellWidth, _wallWidth);
 
                 if (cells[x][y].hasStatus(cellStatus.VISITED) && cells[x][y].hasStatus(cellStatus.END))
-                    context.fillRect(x * (cellWidth + wallWidth) + wallWidth, y * (cellWidth + wallWidth) + wallWidth + cellWidth, cellWidth, wallWidth);
+                    context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth, y * (_cellWidth + _wallWidth) + _wallWidth + _cellWidth, _cellWidth, _wallWidth);
 
                 context.fillStyle = spriteColor;
 
@@ -329,20 +325,20 @@ function Maze() {
                     if ((cells[x][y].hasStatus(cellStatus.NORTH) &&
                         cells[x][y - 1].hasStatus(cellStatus.STEPPED)) ||
                         cells[x][y].hasStatus(cellStatus.START)) {
-                        context.fillRect(x * (cellWidth + wallWidth) + ((cellWidth /2) - (wallWidth / 2)) + wallWidth, y * (cellWidth + wallWidth) + ((cellWidth / 2) - (wallWidth / 2)) + wallWidth, wallWidth, -cellWidth);
+                        context.fillRect(x * (_cellWidth + _wallWidth) + ((_cellWidth /2) - (_wallWidth / 2)) + _wallWidth, y * (_cellWidth + _wallWidth) + ((_cellWidth / 2) - (_wallWidth / 2)) + _wallWidth, _wallWidth, -_cellWidth);
                     }
                     if ((cells[x][y].hasStatus(cellStatus.SOUTH) &&
                         cells[x][y + 1].hasStatus(cellStatus.STEPPED)) ||
                         cells[x][y].hasStatus(cellStatus.END)) {
-                        context.fillRect(x * (cellWidth + wallWidth) + ((cellWidth /2) - (wallWidth / 2)) + wallWidth, y * (cellWidth + wallWidth) + ((cellWidth / 2) - (wallWidth / 2)) + wallWidth, wallWidth, cellWidth);
+                        context.fillRect(x * (_cellWidth + _wallWidth) + ((_cellWidth /2) - (_wallWidth / 2)) + _wallWidth, y * (_cellWidth + _wallWidth) + ((_cellWidth / 2) - (_wallWidth / 2)) + _wallWidth, _wallWidth, _cellWidth);
                     }
                     if (cells[x][y].hasStatus(cellStatus.WEST) &&
                         cells[x - 1][y].hasStatus(cellStatus.STEPPED)) {
-                        context.fillRect(x * (cellWidth + wallWidth) + ((cellWidth /2) + (wallWidth / 2)) + wallWidth, y * (cellWidth + wallWidth) + ((cellWidth / 2) - (wallWidth / 2)) + wallWidth, -cellWidth, wallWidth);
+                        context.fillRect(x * (_cellWidth + _wallWidth) + ((_cellWidth /2) + (_wallWidth / 2)) + _wallWidth, y * (_cellWidth + _wallWidth) + ((_cellWidth / 2) - (_wallWidth / 2)) + _wallWidth, -_cellWidth, _wallWidth);
                     }
                     if (cells[x][y].hasStatus(cellStatus.EAST) &&
                         cells[x + 1][y].hasStatus(cellStatus.STEPPED)) {
-                        context.fillRect(x * (cellWidth + wallWidth) + ((cellWidth /2) - (wallWidth / 2)) + wallWidth, y * (cellWidth + wallWidth) + ((cellWidth / 2) - (wallWidth / 2)) + wallWidth, cellWidth, wallWidth);
+                        context.fillRect(x * (_cellWidth + _wallWidth) + ((_cellWidth /2) - (_wallWidth / 2)) + _wallWidth, y * (_cellWidth + _wallWidth) + ((_cellWidth / 2) - (_wallWidth / 2)) + _wallWidth, _cellWidth, _wallWidth);
                     }
                 }
             }

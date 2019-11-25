@@ -23,7 +23,7 @@ function Menu (settings) {
     for (let prop in aiTypes) { new PlayerButton(prop, playerSettings); }
 
     form.appendChild(playerSettings);
-    new Menu_MazeSettings(form);
+    new Menu_MazeSettings(form, settings);
     form.appendChild(document.createElement("br"));
     form.appendChild(document.createElement("br"));
     form.appendChild(newGame);
