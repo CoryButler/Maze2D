@@ -1,4 +1,4 @@
-function Maze(width = 32, height = 16, cellWidth = 14, wallWidth = 2) {
+function Maze(width = 32, height = 16, cellWidth = 20, wallWidth = 2) {
     let mazeReady = new Event('mazeReady');
     let doNotRender = false;
     window.addEventListener('mazeReady', function() { 

@@ -40,6 +40,19 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
     this.canvasSprite = () => { return canvas; }
     this.canvasTrail = () => { return canvasTrail; }
 
+    this.forceColor = (color) => {
+        spriteColor = color;
+        switch (spriteColor) {
+            case "pink":
+                spriteColor = "#FF3399";
+                break;
+            case "green":
+                spriteColor = "#00CC00";
+                break;
+        }
+        contextTrail.fillStyle = spriteColor;
+    }
+
     const modulo = (n, m) => {
         return ((n % m) + m) % m;
     }

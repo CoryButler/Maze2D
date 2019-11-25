@@ -1,31 +1,29 @@
 function Game (settings) {
     var layerManager = new LayerManager();
     var maze = new Maze(settings.width, settings.height);
-    var players = [
-        //new Player(maze, 1),
-        //new Player(maze, 2)
-    ];
+    var players = [];
 
     settings.players.forEach(p => {
-        let toAdd;
-        switch (p.type) {
-            case aiTypes.PLAYER_1:
-                toAdd = new Player(maze, aiTypes.PLAYER_1);
-                break;
-        }
-        players.push(toAdd);
-    })
+        if (!p.isChecked) return;
+     
+        if (p.type === aiTypes.PLAYER_1 || p.type === aiTypes.PLAYER_2) 
+            players.push(new Player(maze, p.type));
+        else
+            players.push(new Ai(maze, p.type, p.speed));
+
+        players[players.length - 1].forceColor(p.color);
+    });
 
     players.forEach(player => {
         layerManager.addTrail(player.canvasTrail());
         layerManager.addSprite(player.canvasSprite());
     });
 
-    for (var i = 0; i < players.length; i++) {
+    /* for (var i = 0; i < players.length; i++) {
         //var dropdown = document.getElementById("player" + (i + 1) + "_color");
         //var selected = dropdown.options[dropdown.selectedIndex].value;
         players[i].forceColor(settings.players[i].color)//selected);
-    }
+    } */
     maze.create(players[0].spriteColor(), settings.animate);
 
     const renderLoop = function() {

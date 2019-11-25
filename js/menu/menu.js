@@ -11,7 +11,12 @@ function Menu (settings) {
 
     playerSettings.style = "border: 1px solid grey; border-radius: 4px; padding: 16px 0px 0px 8px; float: left; margin-right: 8px";
 
-    newGame.onclick = () => { closeMenu(); new Game(settings); }
+    newGame.onclick = () => {
+        if (!playerButtons.some(pb => pb.isChecked()))  return;
+        updateSettings();
+        closeMenu();
+        new Game(settings);
+    }
     newGame.innerHTML = "New Game";
 
     cancel.style = "float: right";
@@ -20,10 +25,11 @@ function Menu (settings) {
 
     form.appendChild(header);
     
-    for (let prop in aiTypes) { new PlayerButton(prop, playerSettings); }
+    let playerButtons = [];
+    settings.players.forEach(player => { playerButtons.push(new PlayerButton(player, playerSettings)); });
 
     form.appendChild(playerSettings);
-    new Menu_MazeSettings(form, settings);
+    let mazeSettings = new Menu_MazeSettings(form, settings);
     form.appendChild(document.createElement("br"));
     form.appendChild(document.createElement("br"));
     form.appendChild(newGame);
@@ -32,5 +38,21 @@ function Menu (settings) {
 
     const closeMenu = () =>  {
         body.removeChild(form);
+    }
+
+    const updateSettings = () => {
+        settings.width = mazeSettings.width();
+        settings.height = mazeSettings.height();
+        settings.players = [];
+        playerButtons.forEach(pb => {
+            settings.players.push(
+                {
+                    type: pb.type(),
+                    color: pb.color(),
+                    speed: pb.speed(),
+                    isChecked: pb.isChecked()
+                }
+            );
+        });
     }
 }
