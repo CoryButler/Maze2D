@@ -10,7 +10,8 @@ canvas {
    transform: translate(-50%, -50%);
 }
 
-form {
+#menu {
+   display: block;
    margin: 0;
    position: absolute;
    left: 50%;

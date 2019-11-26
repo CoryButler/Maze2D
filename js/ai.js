@@ -1,18 +1,20 @@
-const aiTypes = { PLAYER_1: 0, PLAYER_2: 1, RANDOM: 2, RANDOM_TURNS: 3, UNVISITED_TURNS: 4, RIGHT_HAND: 5, LEFT_HAND: 6 };
-const aiSpeeds = { VERY_SLOW: 2000, SLOW: 1000, NORMAL: 500, FAST: 250, VERY_FAST: 125, SUPER_FAST: 1, TELEPORT: 0 };
+import { aiSpeeds, aiTypes, isPaused, cellStatus, playerColors } from "./enums.js";
 
-function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) {
+export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) {
     var _aiType = aiType;
     var _maze = maze;
     var controlsEnabled = false;
     var prevDirection = cellStatus.SOUTH;
     var stepsTaken = 0;
 
-    window.addEventListener('mazeReady', function() {
+    const mazeReady = () => {
+        window.removeEventListener('mazeReady', mazeReady);
         toggleControls();
         render();
-        logicLoop();  }
-    );
+        logicLoop();
+    }
+
+    window.addEventListener('mazeReady', mazeReady);
 
     var _aiSpeed = aiSpeed;
     var cells = _maze.cells().slice();
@@ -68,6 +70,11 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
     }
     
     var logicLoop = function() {
+        if (isPaused()) {
+            setTimeout(function() { logicLoop(); }, 1);
+            return;
+        }
+
         if (!controlsEnabled) return;
 
         if (reachedGoal())  {
@@ -303,7 +310,7 @@ function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) 
         context.arc(screenSpaceX + _maze.cellWidth() * 0.65, screenSpaceY + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
         context.stroke();
 
-        contextTrail.fillRect(screenSpaceX + _maze.wallWidth() * 2, screenSpaceY + _maze.wallWidth() * 2, _maze.cellWidth() - _maze.wallWidth() * 4, _maze.cellWidth() - _maze.wallWidth() * 4);
+        contextTrail.fillRect(screenSpaceX + _maze.cellWidth() * 0.25, screenSpaceY + _maze.cellWidth() * 0.25, _maze.cellWidth() - _maze.cellWidth() * 0.5, _maze.cellWidth() - _maze.cellWidth() * 0.5);
     }
 
     const toScreenSpace = function(n)  {

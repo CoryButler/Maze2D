@@ -1,4 +1,9 @@
-function Maze(width = 32, height = 16, cellWidth = 20, wallWidth = 2) {
+import MazeCell from "./mazeCell.js";
+import { cellStatus } from "./enums.js";
+import Random from "./random.js";
+
+export default function Maze(seed, width = 32, height = 16, cellWidth = 20, wallWidth = 2) {
+    const random = new Random(seed);
     let mazeReady = new Event('mazeReady');
     let doNotRender = false;
     window.addEventListener('mazeReady', function() { 
@@ -25,11 +30,11 @@ function Maze(width = 32, height = 16, cellWidth = 20, wallWidth = 2) {
         }
     }
 
-    let startCell = {x: Math.floor(Math.random() * columnCount), y: 0};
+    let startCell = {x: Math.floor(random.nextNormalized() * columnCount), y: 0};
     let endCell = {x: 0, y: 0};
     cells[startCell.x][startCell.y].status.push(cellStatus.START);
 
-    let initPos = { x: Math.floor(Math.random() * columnCount), y: Math.floor(Math.random() * rowCount) };
+    let initPos = { x: Math.floor(random.nextNormalized() * columnCount), y: Math.floor(random.nextNormalized() * rowCount) };
     cellStack.push(initPos);
     visitedCellCount++;
 
@@ -78,7 +83,7 @@ function Maze(width = 32, height = 16, cellWidth = 20, wallWidth = 2) {
                 neighbors.push(cellStatus.EAST);
     
             if (neighbors.length > 0) {
-                let nextCell = neighbors[Math.floor(Math.random() * neighbors.length)];
+                let nextCell = neighbors[Math.floor(random.nextNormalized() * neighbors.length)];
     
                 switch (nextCell) {
                     case cellStatus.NORTH:
@@ -133,7 +138,7 @@ function Maze(width = 32, height = 16, cellWidth = 20, wallWidth = 2) {
                 neighbors.push(cellStatus.EAST);
     
             if (neighbors.length > 0) {
-                let nextCell = neighbors[Math.floor(Math.random() * neighbors.length)];
+                let nextCell = neighbors[Math.floor(random.nextNormalized() * neighbors.length)];
     
                 switch (nextCell) {
                     case cellStatus.NORTH:

@@ -1,8 +1,12 @@
-function Settings () {
+import { aiTypes, aiSpeeds } from "./enums.js";
+
+export default function Settings () {
     return {
         width: 10,
         height: 10,
         animate: true,
+        useSeed: false,
+        seed: 0,
         players: [
             { type: aiTypes.PLAYER_1, color: "green", speed: aiSpeeds.NORMAL, isChecked: true },
             { type: aiTypes.PLAYER_2, color: "pink", speed: aiSpeeds.NORMAL, isChecked: false },

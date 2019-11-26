@@ -1,4 +1,4 @@
-function LayerManager () {
+export default function LayerManager () {
     const _cycleSpeed = 500;
     var _isCycling = false;
     var _trailLayers = [];
@@ -22,14 +22,17 @@ function LayerManager () {
 
     this.clearLayers = () => {
         _trailLayers.forEach(tLayer => {
-            document.body.removeChild(tLayer);
+            tLayer.remove();
         });
         _trailLayers = [];
         
         _spriteLayers.forEach(sLayer => {
-            document.body.removeChild(sLayer);
+            sLayer.remove();
         });
         _spriteLayers = [];
+
+        let mazeCanvas = document.getElementsByTagName("canvas")[0];
+        if (mazeCanvas) mazeCanvas.remove();
     }
 
     const cycleLayers = function () {

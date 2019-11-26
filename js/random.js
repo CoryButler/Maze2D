@@ -1,4 +1,4 @@
-function Random(seed) {
+export default function Random(seed) {
     var _seed = seed % 2147483647;
     if (_seed <= 0) _seed += 2147483646;
 

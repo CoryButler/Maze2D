@@ -1,3 +1,2 @@
-
-    let settings = new Settings();
-    new Menu(settings);
+import Game from "./game.js";
+new Game();

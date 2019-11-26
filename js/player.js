@@ -1,4 +1,6 @@
-function Player(maze, id) {
+import { aiTypes, cellStatus, isPaused, playerColors } from "./enums.js";
+
+export default function Player(maze, id) {
     var _maze = maze;
     var _id = id;
     var controlsEnabled = false;
@@ -35,9 +37,9 @@ function Player(maze, id) {
     this.canvasTrail = () => { return canvasTrail; }
 
     var handler = function(key) {
-        if (!controlsEnabled) return;
+        if (isPaused()) return;
 
-        console.log(key.code)
+        if (!controlsEnabled) return;
 
         var prevX = x;
         var prevY = y;
@@ -137,7 +139,7 @@ function Player(maze, id) {
         context.arc(screenSpaceX + _maze.cellWidth() * 0.65, screenSpaceY + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
         context.stroke();
 
-        contextTrail.fillRect(screenSpaceX + _maze.wallWidth() * 2, screenSpaceY + _maze.wallWidth() * 2, _maze.cellWidth() - _maze.wallWidth() * 4, _maze.cellWidth() - _maze.wallWidth() * 4);
+        contextTrail.fillRect(screenSpaceX + _maze.cellWidth() * 0.25, screenSpaceY + _maze.cellWidth() * 0.25, _maze.cellWidth() - _maze.cellWidth() * 0.5, _maze.cellWidth() - _maze.cellWidth() * 0.5);
     }
 
     const toScreenSpace = function(n)  {
