@@ -1,4 +1,4 @@
-import { aiTypes, cellStatus, isPaused, playerColors } from "./enums.js";
+import { aiTypes, cellStatus, isPaused, playerColors, aiSpeeds } from "./enums.js";
 
 export default function Player(maze, id) {
     var _maze = maze;
@@ -36,11 +36,12 @@ export default function Player(maze, id) {
     this.canvasSprite = () => { return canvas; }
     this.canvasTrail = () => { return canvasTrail; }
 
+    let path = [];
+    let animatingSprite = false;
+
     var handler = function(key) {
-        if (isPaused()) return;
-
-        if (!controlsEnabled) return;
-
+        if (isPaused() || animatingSprite || !controlsEnabled) return;
+        
         var prevX = x;
         var prevY = y;
 
@@ -49,21 +50,49 @@ export default function Player(maze, id) {
             if (key.key === 'a' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
             if (key.key === 's' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;
             if (key.key === 'd' && playerCell().hasStatus(cellStatus.EAST)) x += 1;
+            if (key.key === 'q' && path.length > 0) {
+                animateSprite(playerCell());
+                return;
+            }
         }
         if (_id === aiTypes.PLAYER_2 || _id === undefined) {
             if (key.key === 'ArrowUp' && playerCell().hasStatus(cellStatus.NORTH)) y -= 1;
             if (key.key === 'ArrowLeft' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
             if (key.key === 'ArrowDown' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;
             if (key.key === 'ArrowRight' && playerCell().hasStatus(cellStatus.EAST)) x += 1;
+            if (key.key === 'Enter' && path.length > 0) {
+                animateSprite(playerCell());
+                return;
+            }
         }
         
-        if (x !== prevX || y !== prevY) stepsTaken++;
+        if (x !== prevX || y !== prevY) {
+            stepsTaken++;
+            path.push(playerCell(prevX, prevY));
+        }
+
+        if (path.length >= 2 && x === path[path.length - 2].x && y === path[path.length - 2].y) {
+            path.pop();
+            path.pop();
+        }
         
         if (reachedGoal()) {
             render();
             toggleControls();
             alert("You did it!\n\nGood job.\n\nYou took " + stepsTaken + " steps.");
         }
+    }
+
+    const animateSprite = (initialCell) => {
+        animatingSprite = true;
+        stepsTaken++;
+
+        let destinationCell = path.pop();
+        x = destinationCell.x;
+        y = destinationCell.y;
+
+        if (destinationCell.decisionsFromStart === initialCell.decisionsFromStart) setTimeout(() => animateSprite(initialCell), aiSpeeds.VERY_FAST);
+        else animatingSprite = false;
     }
 
     document.addEventListener("keyup", handler);
@@ -108,8 +137,8 @@ export default function Player(maze, id) {
         return playerCell().hasStatus(cellStatus.END);
     }
 
-    const playerCell = function() {
-        return cells[x][y];
+    const playerCell = function(pX = x, pY = y) {
+        return cells[pX][pY];
     }
 
     this.render = () => { render(); }
