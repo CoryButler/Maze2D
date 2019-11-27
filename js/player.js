@@ -8,7 +8,8 @@ export default function Player(maze, id) {
 
     window.addEventListener('mazeReady', function() {
         toggleControls();
-        render(); 
+        render();
+        drawPath(_maze.startCell().x, -1)
     });
 
     var cells = _maze.cells().slice();
@@ -69,6 +70,7 @@ export default function Player(maze, id) {
         if (x !== prevX || y !== prevY) {
             stepsTaken++;
             path.push(playerCell(prevX, prevY));
+            drawPath(prevX, prevY);
         }
 
         if (path.length >= 2 && x === path[path.length - 2].x && y === path[path.length - 2].y) {
@@ -81,6 +83,26 @@ export default function Player(maze, id) {
             toggleControls();
             alert("You did it!\n\nGood job.\n\nYou took " + stepsTaken + " steps.");
         }
+    }
+
+    const drawPath = (prevX, prevY) => {
+        let tempStyle = contextTrail.strokeStyle;
+        const tempWidth = contextTrail.lineWidth;
+        const tempCap = contextTrail.lineCap;
+        context.lineCap = "round";
+        contextTrail.lineWidth = _maze.cellWidth() * 0.2;
+        if (contextTrail.lineWidth < 1) contextTrail.lineWidth = 1;
+        contextTrail.strokeStyle = spriteColor;
+        contextTrail.beginPath();
+        contextTrail.moveTo(toScreenSpace(prevX) + _maze.cellWidth() * 0.5, toScreenSpace(prevY) + _maze.cellWidth() * 0.5);
+        contextTrail.lineTo(toScreenSpace(x) + _maze.cellWidth() * 0.5, toScreenSpace(y) + _maze.cellWidth() * 0.5);
+        contextTrail.stroke();
+        contextTrail.beginPath();
+        contextTrail.arc(toScreenSpace(x) + _maze.cellWidth() * 0.5, toScreenSpace(y) + _maze.cellWidth() * 0.5, contextTrail.lineWidth * 0.5, 0, 2 * Math.PI);
+        contextTrail.fill();
+        contextTrail.strokeStyle = tempStyle;
+        contextTrail.lineWidth = tempWidth;
+        contextTrail.lineCap = tempCap;
     }
 
     const animateSprite = (initialCell) => {
@@ -168,7 +190,26 @@ export default function Player(maze, id) {
         context.arc(screenSpaceX + _maze.cellWidth() * 0.65, screenSpaceY + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
         context.stroke();
 
-        contextTrail.fillRect(screenSpaceX + _maze.cellWidth() * 0.25, screenSpaceY + _maze.cellWidth() * 0.25, _maze.cellWidth() - _maze.cellWidth() * 0.5, _maze.cellWidth() - _maze.cellWidth() * 0.5);
+        //contextTrail.fillRect(screenSpaceX + _maze.cellWidth() * 0.25, screenSpaceY + _maze.cellWidth() * 0.25, _maze.cellWidth() - _maze.cellWidth() * 0.5, _maze.cellWidth() - _maze.cellWidth() * 0.5);
+        /* if (path.some(c => c.x === x && c.y === y)) {
+            if ((cells[x][y].hasStatus(cellStatus.NORTH) &&
+                path.some(c => c.x === x && c.y === y - 1)) ||
+                cells[x][y].hasStatus(cellStatus.START)) {
+                    contextTrail.fillRect(x * (cellWidth + wallWidth) + ((cellWidth / 2) - (wallWidth / 2)) + wallWidth, y * (cellWidth + wallWidth) + ((cellWidth / 2) - (wallWidth / 2)) + wallWidth, wallWidth, -cellWidth);
+            }
+            if (cells[x][y].hasStatus(cellStatus.SOUTH) &&
+                path.some(c => c.x === x && c.y === y + 1)) {
+                    contextTrail.fillRect(x * (cellWidth + wallWidth) + ((cellWidth / 2) - (wallWidth / 2)) + wallWidth, y * (cellWidth + wallWidth) + ((cellWidth / 2) - (wallWidth / 2)) + wallWidth, wallWidth, cellWidth);
+            }
+            if (cells[x][y].hasStatus(cellStatus.WEST) &&
+                path.some(c => c.x === x - 1 && c.y === y)) {
+                    contextTrail.fillRect(x * (cellWidth + wallWidth) + ((cellWidth / 2) + (wallWidth / 2)) + wallWidth, y * (cellWidth + wallWidth) + ((cellWidth / 2) - (wallWidth / 2)) + wallWidth, -cellWidth, wallWidth);
+            }
+            if (cells[x][y].hasStatus(cellStatus.EAST) &&
+                path.some(c => c.x === x + 1 && c.y === y)) {
+                    contextTrail.fillRect(x * (cellWidth + wallWidth) + ((cellWidth / 2) - (wallWidth / 2)) + wallWidth, y * (cellWidth + wallWidth) + ((cellWidth / 2) - (wallWidth / 2)) + wallWidth, cellWidth, wallWidth);
+            }
+        }    */
     }
 
     const toScreenSpace = function(n)  {

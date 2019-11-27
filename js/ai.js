@@ -11,6 +11,7 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
         window.removeEventListener('mazeReady', mazeReady);
         toggleControls();
         render();
+        drawPath(_maze.startCell().x, -1)
         logicLoop();
     }
 
@@ -83,6 +84,9 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
             toggleControls();
             return;
         }
+        
+        var prevX = x;
+        var prevY = y;
 
         cells[x][y].status.push(cellStatus.STEPPED);
 
@@ -125,6 +129,8 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
 
         stepsTaken++;
 
+        drawPath(prevX, prevY);
+
         if (_aiSpeed === aiSpeeds.TELEPORT){
             try {
                 logicLoop();
@@ -134,6 +140,26 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
             }
         }
         else setTimeout(function() { logicLoop(); }, _aiSpeed);
+    }
+
+    const drawPath = (prevX, prevY) => {
+        let tempStyle = contextTrail.strokeStyle;
+        const tempWidth = contextTrail.lineWidth;
+        const tempCap = contextTrail.lineCap;
+        context.lineCap = "round";
+        contextTrail.lineWidth = _maze.cellWidth() * 0.2;
+        if (contextTrail.lineWidth < 1) contextTrail.lineWidth = 1;
+        contextTrail.strokeStyle = spriteColor;
+        contextTrail.beginPath();
+        contextTrail.moveTo(toScreenSpace(prevX) + _maze.cellWidth() * 0.5, toScreenSpace(prevY) + _maze.cellWidth() * 0.5);
+        contextTrail.lineTo(toScreenSpace(x) + _maze.cellWidth() * 0.5, toScreenSpace(y) + _maze.cellWidth() * 0.5);
+        contextTrail.stroke();
+        contextTrail.beginPath();
+        contextTrail.arc(toScreenSpace(x) + _maze.cellWidth() * 0.5, toScreenSpace(y) + _maze.cellWidth() * 0.5, contextTrail.lineWidth * 0.5, 0, 2 * Math.PI);
+        contextTrail.fill();
+        contextTrail.strokeStyle = tempStyle;
+        contextTrail.lineWidth = tempWidth;
+        contextTrail.lineCap = tempCap;
     }
 
     const random = function () {
@@ -310,7 +336,7 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
         context.arc(screenSpaceX + _maze.cellWidth() * 0.65, screenSpaceY + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
         context.stroke();
 
-        contextTrail.fillRect(screenSpaceX + _maze.cellWidth() * 0.25, screenSpaceY + _maze.cellWidth() * 0.25, _maze.cellWidth() - _maze.cellWidth() * 0.5, _maze.cellWidth() - _maze.cellWidth() * 0.5);
+        //contextTrail.fillRect(screenSpaceX + _maze.cellWidth() * 0.25, screenSpaceY + _maze.cellWidth() * 0.25, _maze.cellWidth() - _maze.cellWidth() * 0.5, _maze.cellWidth() - _maze.cellWidth() * 0.5);
     }
 
     const toScreenSpace = function(n)  {
