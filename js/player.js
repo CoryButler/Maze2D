@@ -6,11 +6,14 @@ export default function Player(maze, id) {
     var controlsEnabled = false;
     var stepsTaken = 0;
 
-    window.addEventListener('mazeReady', function() {
+    const mazeReady = () => {
+        window.removeEventListener('mazeReady', mazeReady);
         toggleControls();
         render();
-        drawPath(_maze.startCell().x, -1)
-    });
+        drawPath(_maze.startCell().x, -1);
+    }
+
+    window.addEventListener('mazeReady', mazeReady);
 
     var cells = _maze.cells().slice();
 
@@ -48,20 +51,20 @@ export default function Player(maze, id) {
 
         if (_id === aiTypes.PLAYER_1 || _id === undefined) {
             if (key.key === 'w' && playerCell().hasStatus(cellStatus.NORTH)) y -= 1;
-            if (key.key === 'a' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
-            if (key.key === 's' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;
-            if (key.key === 'd' && playerCell().hasStatus(cellStatus.EAST)) x += 1;
-            if (key.key === 'q' && path.length > 0) {
+            else if (key.key === 'a' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
+            else if (key.key === 's' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;
+            else if (key.key === 'd' && playerCell().hasStatus(cellStatus.EAST)) x += 1;
+            else if (key.key === 'q' && path.length > 0) {
                 animateSprite(playerCell());
                 return;
             }
         }
         if (_id === aiTypes.PLAYER_2 || _id === undefined) {
             if (key.key === 'ArrowUp' && playerCell().hasStatus(cellStatus.NORTH)) y -= 1;
-            if (key.key === 'ArrowLeft' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
-            if (key.key === 'ArrowDown' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;
-            if (key.key === 'ArrowRight' && playerCell().hasStatus(cellStatus.EAST)) x += 1;
-            if (key.key === 'Enter' && path.length > 0) {
+            else if (key.key === 'ArrowLeft' && playerCell().hasStatus(cellStatus.WEST)) x -= 1;
+            else if (key.key === 'ArrowDown' && playerCell().hasStatus(cellStatus.SOUTH)) y += 1;
+            else if (key.key === 'ArrowRight' && playerCell().hasStatus(cellStatus.EAST)) x += 1;
+            else if (key.key === 'Enter' && path.length > 0) {
                 animateSprite(playerCell());
                 return;
             }
