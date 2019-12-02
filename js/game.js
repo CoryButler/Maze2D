@@ -16,10 +16,7 @@ export default function Game ()
         layerManager.clearLayers();
         maze = new Maze(settings.seed, settings.width, settings.height);
         
-        while (players.length > 0) {
-            let p = players.pop();
-            p = null;
-        }
+        while (players.length > 0) { players.pop(); }
 
         settings.players.forEach(p => {
             if (!p.isChecked) return;
@@ -37,7 +34,7 @@ export default function Game ()
             layerManager.addSprite(player.canvasSprite());
         });
 
-        maze.create(players[0].spriteColor(), settings.animate);
+        maze.create(players.length > 0 ? players[0].spriteColor() : "grey", settings.animate);
 
         renderLoop();
     }

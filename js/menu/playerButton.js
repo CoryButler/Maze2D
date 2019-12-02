@@ -1,14 +1,16 @@
 import { aiTypes, playerColors, aiSpeeds } from "../enums.js";
 
 export default function PlayerButton (player, parent) {
-    const selected_type = playerColors.indexOf(player.color);
+    const selected_color = playerColors.indexOf(player.color);
     const selected_speed = player.speed;
+    const selected_controls = player.controls;
     
     const div = document.createElement("div");
     const checkbox = document.createElement("input");
     const label = document.createElement("label");
-    const dropdown_type = document.createElement("select");
+    const dropdown_color = document.createElement("select");
     const dropdown_speed = document.createElement("select");
+    const controlScheme = document.createElement("p");
     let isChecked = player.isChecked;
     let type = player.type;
     let speed = player.speed;
@@ -24,14 +26,17 @@ export default function PlayerButton (player, parent) {
     checkbox.checked = isChecked;
     checkbox.oninput = () => { isChecked = !isChecked; }
 
-    dropdown_type.id = "select_" + type;
-    dropdown_type.style = "margin: 0px 16px; float: right";
-
+    dropdown_color.id = "select_" + color;
+    dropdown_color.style = "margin: 0px 16px; float: right";
 
     dropdown_speed.id = "select_" + speed;
     dropdown_speed.style = "margin: 0px 16px; float: right";
 
-    label.for = dropdown_type.id;
+    controlScheme.id = "controls";
+    controlScheme.style = "margin: 0px 16px; float: right";
+    controlScheme.innerHTML = selected_controls;
+
+    label.for = dropdown_color.id;
     label.style = "font-size: 0.8em";
     for (let key in aiTypes) { if (aiTypes[key] === type) label.innerHTML = key; }
 
@@ -40,8 +45,8 @@ export default function PlayerButton (player, parent) {
         option.value = playerColors[i];
         option.style = "background-color: " + playerColors[i].replace("green", "#00CC00").replace("pink", "#FF3399");
         option.innerHTML = playerColors[i];
-        option.selected = selected_type === i;
-        dropdown_type.appendChild(option);
+        option.selected = selected_color === i;
+        dropdown_color.appendChild(option);
     }
 
     for (let i in aiSpeeds) {
@@ -52,13 +57,14 @@ export default function PlayerButton (player, parent) {
         dropdown_speed.appendChild(option);
     }
 
-    dropdown_type.onchange = () => { color = dropdown_type.options[dropdown_type.selectedIndex].value; }
+    dropdown_color.onchange = () => { color = dropdown_color.options[dropdown_color.selectedIndex].value; }
     dropdown_speed.onchange = () => { speed = dropdown_speed.options[dropdown_speed.selectedIndex].value; }
 
     div.appendChild(checkbox);
     div.appendChild(label);
-    div.appendChild(dropdown_type);
-    div.appendChild(dropdown_speed);
+    div.appendChild(dropdown_color);
+    if (selected_speed !== undefined) div.appendChild(dropdown_speed);
+    if (selected_controls !== undefined) div.appendChild(controlScheme);
     div.appendChild(document.createElement("br"));
     div.appendChild(document.createElement("br"));
     parent.appendChild(div);

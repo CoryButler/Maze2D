@@ -20,12 +20,12 @@ export default function Player(maze, id) {
     var canvasTrail = document.createElement("canvas");
     canvasTrail.width = _maze.width();
     canvasTrail.height = _maze.height();
-    document.getElementsByTagName("body")[0].appendChild(canvasTrail);
+    document.getElementById("game").appendChild(canvasTrail);
 
     var canvas = document.createElement("canvas");
     canvas.width = _maze.width();
     canvas.height = _maze.height();
-    document.getElementsByTagName("body")[0].appendChild(canvas);
+    document.getElementById("game").appendChild(canvas);
     
     var context = canvas.getContext("2d");
     var contextTrail = canvasTrail.getContext("2d");

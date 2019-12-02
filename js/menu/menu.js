@@ -4,15 +4,18 @@ import { isPaused } from "../enums.js"
 
 export default function Menu (settings, startGame) {
     const body = document.getElementsByTagName("body")[0];
-    const form = document.createElement("div");
+    const hud = document.createElement("div");
+    const menu = document.createElement("div");
     const header = document.createElement("h1");
     const newGame = document.createElement("button");
     const cancel = document.createElement("button");
     const playerSettings = document.createElement("div");
     const settingsButton = document.createElement("button");
+    const downloadButton = document.createElement("button");
     const seedNotice = document.createElement("p");
 
-    form.id = "menu";
+    hud.id = "hud";
+    menu.id = "menu";
 
     header.style = "text-align: center; padding: 0px; width: 100%; background-color: grey; color: white";
     header.innerHTML = "Settings";
@@ -20,7 +23,6 @@ export default function Menu (settings, startGame) {
     playerSettings.style = "border: 1px solid grey; border-radius: 4px; padding: 16px 0px 0px 8px; float: left; margin-right: 8px";
 
     newGame.onclick = () => {
-        if (!playerButtons.some(pb => pb.isChecked())) return;
         updateSettings();
         closeMenu();
         startGame();
@@ -32,35 +34,49 @@ export default function Menu (settings, startGame) {
     cancel.innerHTML = "Cancel";
     cancel.style.display = "none";
 
+    hud.style.display = "none";
+
     settingsButton.innerHTML = "Settings";
-    settingsButton.style.display = "none";
     settingsButton.onclick = () => { openMenu(); }
+
+    downloadButton.innerHTML = "Download Maze";
+    downloadButton.onclick = () => { 
+        let a = document.createElement("a");
+        a.download = `${settings.seed}_${settings.width}x${settings.height}.png`;
+        a.href = document.getElementsByTagName("canvas")[0].toDataURL('image/png');
+        
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
 
     seedNotice.style.fontSize = "0.8em";
 
-    form.appendChild(header);
+    menu.appendChild(header);
     
     let playerButtons = [];
     settings.players.forEach(player => { playerButtons.push(new PlayerButton(player, playerSettings)); });
 
-    form.appendChild(playerSettings);
-    let mazeSettings = new Menu_MazeSettings(form, settings);
-    form.appendChild(document.createElement("br"));
-    form.appendChild(document.createElement("br"));
-    form.appendChild(newGame);
-    form.appendChild(cancel);
-    if (document.getElementsByTagName("canvas").length > 0) form.appendChild(cancel);
-    body.appendChild(form);
-    body.appendChild(settingsButton);
-    body.appendChild(document.createElement("br"));
-    body.appendChild(seedNotice);
+    menu.appendChild(playerSettings);
+    let mazeSettings = new Menu_MazeSettings(menu, settings);
+    menu.appendChild(document.createElement("br"));
+    menu.appendChild(document.createElement("br"));
+    menu.appendChild(newGame);
+    menu.appendChild(cancel);
+    if (document.getElementsByTagName("canvas").length > 0) menu.appendChild(cancel);
+    hud.appendChild(downloadButton);
+    hud.appendChild(document.createElement("br"));
+    hud.appendChild(settingsButton);
+    hud.appendChild(document.createElement("br"));
+    hud.appendChild(seedNotice);
+    body.appendChild(hud);
+    body.appendChild(menu);
 
     const openMenu = () => {
         isPaused(true);
         cancel.style.display = "unset";
-        form.style.display = "unset";
-        settingsButton.style.display = "none";
-        seedNotice.style.display = "none";
+        menu.style.display = "unset";
+        hud.style.display = "none";
 
         let c = document.getElementsByTagName("canvas");
         for (let i = 0; i < c.length; i++) c[i].style.display = "none";
@@ -68,10 +84,9 @@ export default function Menu (settings, startGame) {
 
     const closeMenu = () =>  {
         isPaused(false);
-        seedNotice.innerHTML = `Current ${settings.useSeed ? "" : "Random "}Seed: ${settings.seed}`
-        form.style.display = "none";
-        settingsButton.style.display = "unset";
-        seedNotice.style.display = "unset";
+        seedNotice.innerHTML = `Current ${settings.useSeed ? "" : "Random "}Seed: ${settings.seed}`;
+        menu.style.display = "none";
+        hud.style.display = "inline-grid";
         
         let c = document.getElementsByTagName("canvas");
         for (let i = 0; i < c.length; i++) c[i].style.display = "unset";

@@ -2,16 +2,21 @@ import MazeCell from "./mazeCell.js";
 import { cellStatus } from "./enums.js";
 import Random from "./random.js";
 
-export default function Maze(seed, width = 32, height = 16, cellWidth = 20, wallWidth = 2) {
+export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wallWidth = 2) {
     const random = new Random(seed);
     let mazeReady = new Event('mazeReady');
     let doNotRender = false;
-    window.addEventListener('mazeReady', function() { 
+
+    const onMazeReady = () => { 
+        window.removeEventListener('mazeReady', onMazeReady);
         setEndCell();
+        setDijkstraValues();
         render();
         doNotRender = true;
-      }
-    );
+    }
+    
+    window.addEventListener('mazeReady', onMazeReady);
+
 
     let _cellWidth = cellWidth;
     let _wallWidth = wallWidth;
@@ -26,12 +31,12 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 20, wall
     for (let i = 0; i < columnCount; i++) {
         cells.push([]);
         for (let j = 0; j < rowCount; j++) {
-            cells[i].push(new MazeCell());
+            cells[i].push(new MazeCell(i, j));
         }
     }
 
-    let startCell = {x: Math.floor(random.nextNormalized() * columnCount), y: 0};
-    let endCell = {x: 0, y: 0};
+    let startCell = { x: Math.floor(random.nextNormalized() * columnCount), y: 0 };
+    let endCell = { x: 0, y: 0 };
     cells[startCell.x][startCell.y].status.push(cellStatus.START);
 
     let initPos = { x: Math.floor(random.nextNormalized() * columnCount), y: Math.floor(random.nextNormalized() * rowCount) };
@@ -40,8 +45,18 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 20, wall
 
     cells[initPos.x][initPos.y].status.push(cellStatus.VISITED);
 
+    let hud = document.getElementById("hud");
+    let hudStyle = window.getComputedStyle(hud);
+    let max = { width: window.innerWidth - (parseInt(hudStyle.width) * 2), height: window.innerHeight - (parseInt(hudStyle.height) * 2) };
+
+    while ((_width > max.width || _height > max.height) && _cellWidth !== 1) {
+        if (--_cellWidth < _wallWidth) _wallWidth--;
+        _width = columnCount * (_cellWidth + _wallWidth) + _wallWidth;
+        _height = rowCount * (_cellWidth + _wallWidth) + _wallWidth;
+    }
+
     let canvas = document.createElement("canvas");
-    document.getElementsByTagName("body")[0].appendChild(canvas);
+    document.getElementById("game").appendChild(canvas);
     canvas.width = _width;
     canvas.height = _height;
 
@@ -55,6 +70,7 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 20, wall
     this.startCell = () => { return startCell; }
     this.columnCount = () => { return columnCount; }
     this.rowCount = () => { return rowCount; }
+    this.canvas = () => { return canvas; }
 
     let spriteColor;
 
@@ -211,8 +227,8 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 20, wall
                 continue;
             }
             
-            let distanceFromStart = cellValues[frontier[0].x][frontier[0].y].distanceFromStart + 1;
-            let decisionsFromStart = cellValues[frontier[0].x][frontier[0].y].decisionsFromStart;
+            let distanceFromStart = parseInt("0" + cellValues[frontier[0].x][frontier[0].y].distanceFromStart) + 1;
+            let decisionsFromStart = parseInt("0" + cellValues[frontier[0].x][frontier[0].y].decisionsFromStart);
             if (getNeighbors(frontier[0]).length >= 3) decisionsFromStart++;
             
             let newFrontier = [];
@@ -262,11 +278,7 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 20, wall
 
         endCell = bestCell;
         cells[endCell.x][endCell.y].status.push(cellStatus.END);
-
-        /*
-        cellValues[startCell.x][startCell.y] = { distanceFromStart: "#", decisionsFromStart: "#" };
-        cellValues[bestCell.x][bestCell.y] = { distanceFromStart: "#", decisionsFromStart: "#" };
-
+        
         for (let i = 0; i < rowCount; i++) {
             let toLog = "";
             for (let j = 0; j < columnCount; j++) {
@@ -275,6 +287,8 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 20, wall
             console.log(toLog);
         }
 
+        console.log();
+
         for (let i = 0; i < rowCount; i++) {
             let toLog = "";
             for (let j = 0; j < columnCount; j++) {
@@ -282,7 +296,69 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 20, wall
             }
             console.log(toLog);
         }
-        */
+    }
+
+    const setDijkstraValues = () => {
+        //let cells = [];
+        let currentX = endCell.x;
+        let currentY = endCell.y;
+
+        /* for (let i = 0; i < columnCount; i++) {
+            cells.push([]);
+            for (let j = 0; j < rowCount; j++) {
+                cells[i].push({});
+            }
+        } */
+
+        let frontier = [cells[currentX][currentY]];
+
+        cells[frontier[0].x][frontier[0].y].dijkstra = 0;
+
+        while (frontier.length > 0) {
+            if (cells[frontier[0].x][frontier[0].y].hasStatus(87)) {
+                frontier.shift();
+                continue;
+            }
+            
+            let dijkstra = parseInt("0" + cells[frontier[0].x][frontier[0].y].dijkstra) + 1;
+            
+            let newFrontier = [];
+            if (cells[frontier[0].x][frontier[0].y].hasStatus(cellStatus.EAST)  && !cells[frontier[0].x + 1][frontier[0].y].hasStatus(87)) {
+                newFrontier.push(cells[frontier[0].x + 1][frontier[0].y]);
+                cells[frontier[0].x + 1][frontier[0].y].dijkstra = dijkstra;
+            }
+            if (cells[frontier[0].x][frontier[0].y].hasStatus(cellStatus.NORTH) && !cells[frontier[0].x][frontier[0].y - 1].hasStatus(87)) {
+                newFrontier.push(cells[frontier[0].x][frontier[0].y - 1]);
+                cells[frontier[0].x][frontier[0].y - 1].dijkstra = dijkstra;
+            }
+            if (cells[frontier[0].x][frontier[0].y].hasStatus(cellStatus.WEST)  && !cells[frontier[0].x - 1][frontier[0].y].hasStatus(87)) {
+                newFrontier.push(cells[frontier[0].x - 1][frontier[0].y]);
+                cells[frontier[0].x - 1][frontier[0].y].dijkstra = dijkstra;
+            }
+            if (cells[frontier[0].x][frontier[0].y].hasStatus(cellStatus.SOUTH) && !cells[frontier[0].x][frontier[0].y + 1].hasStatus(87)) {
+                newFrontier.push(cells[frontier[0].x][frontier[0].y + 1]);
+                cells[frontier[0].x][frontier[0].y + 1].dijkstra = dijkstra;
+            }
+
+            cells[frontier[0].x][frontier[0].y].status.push(87);
+
+           frontier.shift();
+
+            newFrontier.forEach(nf => {
+                nf.dijkstra = dijkstra;
+                frontier.unshift(nf);
+            });
+        }
+
+        for (let i = 0; i < rowCount; i++) {
+            let toLog = "";
+            for (let j = 0; j < columnCount; j++) {
+                toLog += cells[j][i].dijkstra + " ";
+            }
+            console.log(toLog);
+        }
+
+        console.log();
     }
     
     const getNeighbors = function (cell) {

@@ -23,12 +23,12 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
     var canvasTrail = document.createElement("canvas");
     canvasTrail.width = _maze.width();
     canvasTrail.height = _maze.height();
-    document.getElementsByTagName("body")[0].appendChild(canvasTrail);
+    document.getElementById("game").appendChild(canvasTrail);
 
     var canvas = document.createElement("canvas");
     canvas.width = _maze.width();
     canvas.height = _maze.height();
-    document.getElementsByTagName("body")[0].appendChild(canvas);
+    document.getElementById("game").appendChild(canvas);
     
     var context = canvas.getContext("2d");
     var contextTrail = canvasTrail.getContext("2d");
@@ -110,9 +110,6 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
                 break;
             case aiTypes.DIJKSTRA:
                 direction = dijkstra();
-                break;
-            case aiTypes.A_STAR:
-                direction = aStar();
                 break;
         }
 
@@ -229,6 +226,19 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
         
         prevDirection = direction;        
         return direction;
+    }
+
+    const dijkstra = () => {
+        let neighbors = getNeighbors();
+
+        if (neighbors.indexOf(cellStatus.EAST) >= 0 && cells[x + 1][y].dijkstra === playerCell().dijkstra - 1)
+            return cellStatus.EAST;
+        if (neighbors.indexOf(cellStatus.NORTH) >= 0 && cells[x][y - 1].dijkstra === playerCell().dijkstra - 1)
+            return cellStatus.NORTH;
+        if (neighbors.indexOf(cellStatus.WEST) >= 0 && cells[x - 1][y].dijkstra === playerCell().dijkstra - 1)
+            return cellStatus.WEST;
+        if (neighbors.indexOf(cellStatus.SOUTH) >= 0 && cells[x][y + 1].dijkstra === playerCell().dijkstra - 1)
+            return cellStatus.SOUTH;
     }
 
     const getNeighbors = function () {
