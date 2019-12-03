@@ -1,16 +1,18 @@
-import { aiTypes, cellStatus, isPaused, playerColors, aiSpeeds } from "./enums.js";
+import { aiTypes, cellStatus, isPaused, playerColors, aiSpeeds, invertJson, leadingZero, trailingZero } from "./enums.js";
 
 export default function Player(maze, id) {
     var _maze = maze;
     var _id = id;
     var controlsEnabled = false;
     var stepsTaken = 0;
+    let startTime;
 
     const mazeReady = () => {
         window.removeEventListener('mazeReady', mazeReady);
         toggleControls();
         render();
         drawPath(_maze.startCell().x, -1);
+        startTime = Date.now();
     }
 
     window.addEventListener('mazeReady', mazeReady);
@@ -84,8 +86,28 @@ export default function Player(maze, id) {
         if (reachedGoal()) {
             render();
             toggleControls();
-            alert("You did it!\n\nGood job.\n\nYou took " + stepsTaken + " steps.");
+            showStats();
         }
+    }
+
+    const showStats = () => {
+        const hud = document.getElementById("hud");
+
+        const totalMinutes = (Date.now() - startTime) / 60000;
+        const minutes = Math.floor(totalMinutes);
+        const totalSeconds = (totalMinutes - minutes) * 60;
+        const seconds = Math.floor(totalSeconds);
+        const totalMilliseconds = (totalSeconds - seconds) * 1000;
+        const milliseconds = Math.floor(totalMilliseconds);
+
+        const aiTypeKey = invertJson(aiTypes)[_id];
+        const message = `<span style="color: ${spriteColor}">●</span> ${aiTypeKey}: ${stepsTaken} steps — ${leadingZero(minutes)}:${leadingZero(seconds)}:${trailingZero(milliseconds)}`;
+        const p = document.createElement("p");
+
+        p.classList = "stat";
+        p.style = "margin: 4px 0px";
+        p.innerHTML = message;
+        hud.appendChild(p);
     }
 
     const drawPath = (prevX, prevY) => {

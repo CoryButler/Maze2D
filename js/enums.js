@@ -4,5 +4,28 @@ const playerColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pin
 const cellStatus = { EAST: 0, NORTH: 1, WEST: 2, SOUTH: 3, VISITED: 4, START: 5, END: 6, STEPPED: 7 };
 let _isPaused = false;
 const isPaused = (value = null) => { if (value !== null) _isPaused = value; return _isPaused; }
+    
+const invertJson = (input) => {
+    var one, output = {};
+    for (one in input) {
+        if (input.hasOwnProperty(one)) {
+            output[input[one]] = one;
+        }
+    }
+    return output;
+}
 
-export { aiTypes, aiSpeeds, isPaused, playerColors, cellStatus };
+const leadingZero = (num, length = 2) => {
+    let n = "" + num;
+    while (n.length < length) n = "0" + n;
+    return n;
+}
+
+const trailingZero = (num, length = 3) => {
+    let n = "" + num;
+    if (n.length > length) return n.substr(0, length);
+    while (n.length < length) n = n + "0";
+    return n;
+}
+
+export { aiTypes, aiSpeeds, isPaused, playerColors, cellStatus, invertJson, leadingZero, trailingZero };
