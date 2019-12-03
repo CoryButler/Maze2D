@@ -1,4 +1,4 @@
-import { aiSpeeds, aiTypes, isPaused, cellStatus, playerColors } from "./enums.js";
+import { aiSpeeds, aiTypes, isPaused, cellStatus, playerColors, invertJson, leadingZero, trailingZero } from "./enums.js";
 
 export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) {
     var _aiType = aiType;
@@ -6,6 +6,7 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
     var controlsEnabled = false;
     var prevDirection = cellStatus.SOUTH;
     var stepsTaken = 0;
+    let startTime;
 
     const mazeReady = () => {
         window.removeEventListener('mazeReady', mazeReady);
@@ -13,6 +14,7 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
         render();
         drawPath(_maze.startCell().x, -1)
         logicLoop();
+        startTime = Date.now();
     }
 
     window.addEventListener('mazeReady', mazeReady);
@@ -60,16 +62,6 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
         return ((n % m) + m) % m;
     }
     
-    const invertJson = (input) => {
-        var one, output = {};
-        for (one in input) {
-            if (input.hasOwnProperty(one)) {
-                output[input[one]] = one;
-            }
-        }
-        return output;
-    }
-    
     var logicLoop = function() {
         if (isPaused()) {
             setTimeout(function() { logicLoop(); }, 1);
@@ -78,10 +70,9 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
 
         if (!controlsEnabled) return;
 
-        if (reachedGoal())  {
-            var aiNames = invertJson(aiTypes);
-            alert("AI_" + aiNames[_aiType] + " reached the end in " + stepsTaken + " steps.");
+        if (reachedGoal()) {
             toggleControls();
+            showStats();
             return;
         }
         
@@ -137,6 +128,27 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
             }
         }
         else setTimeout(function() { logicLoop(); }, _aiSpeed);
+    }
+
+    const showStats = () => {
+        const hud = document.getElementById("hud");
+
+        const totalMinutes = (Date.now() - startTime) / 60000;
+        const minutes = Math.floor(totalMinutes);
+        const totalSeconds = (totalMinutes - minutes) * 60;
+        const seconds = Math.floor(totalSeconds);
+        const totalMilliseconds = (totalSeconds - seconds) * 1000;
+        const milliseconds = Math.floor(totalMilliseconds);
+
+        const aiTypeKey = invertJson(aiTypes)[_aiType];
+        const aiSpeedKey = invertJson(aiSpeeds)[_aiSpeed];
+        const message = `<span style="color: ${spriteColor}">●</span> ${aiTypeKey} (${aiSpeedKey}): ${stepsTaken} steps — ${leadingZero(minutes)}:${leadingZero(seconds)}:${trailingZero(milliseconds)}`;
+        const p = document.createElement("p");
+
+        p.classList = "stat";
+        p.style = "margin: 4px 0px";
+        p.innerHTML = message;
+        hud.appendChild(p);
     }
 
     const drawPath = (prevX, prevY) => {

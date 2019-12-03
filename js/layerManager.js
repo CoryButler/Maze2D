@@ -1,3 +1,5 @@
+import { isPaused } from "./enums.js";
+
 export default function LayerManager () {
     const _cycleSpeed = 500;
     var _isCycling = false;
@@ -21,6 +23,7 @@ export default function LayerManager () {
     }
 
     this.clearLayers = () => {
+        _isCycling = false;
         _trailLayers.forEach(tLayer => {
             tLayer.remove();
         });
@@ -36,7 +39,7 @@ export default function LayerManager () {
     }
 
     const cycleLayers = function () {
-        if (!_isCycling) return;
+        if (!_isCycling || isPaused()) return;
 
         var zIndex = 1;
 

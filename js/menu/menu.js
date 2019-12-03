@@ -23,6 +23,7 @@ export default function Menu (settings, startGame) {
     playerSettings.style = "border: 1px solid grey; border-radius: 4px; padding: 16px 0px 0px 8px; float: left; margin-right: 8px";
 
     newGame.onclick = () => {
+        clearStats();
         updateSettings();
         closeMenu();
         startGame();
@@ -110,5 +111,11 @@ export default function Menu (settings, startGame) {
             );
         });
         mazeSettings.displayRandomSeed(settings.seed);
+    }
+
+    const clearStats = () => {
+        while (document.getElementsByClassName("stat").length > 0) {
+            document.getElementsByClassName("stat")[0].remove();
+        }
     }
 }

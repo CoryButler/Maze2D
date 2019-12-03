@@ -11,12 +11,13 @@ export default function Game ()
     const layerManager = new LayerManager();
     let maze;
     let players = [];
+    let isRendering = false;
 
     const start = () => {
         layerManager.clearLayers();
         maze = new Maze(settings.seed, settings.width, settings.height);
         
-        while (players.length > 0) { players.pop(); }
+        while (players.length > 0) players.pop();
 
         settings.players.forEach(p => {
             if (!p.isChecked) return;
@@ -36,7 +37,8 @@ export default function Game ()
 
         maze.create(players.length > 0 ? players[0].spriteColor() : "grey", settings.animate);
 
-        renderLoop();
+        if (!isRendering) renderLoop();
+        isRendering = true;
     }
     
     const renderLoop = function() {
