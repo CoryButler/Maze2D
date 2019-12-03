@@ -1,4 +1,4 @@
-import { aiTypes, playerColors, aiSpeeds } from "../enums.js";
+import { aiTypes, playerColors, aiSpeeds } from "../global.js";
 
 export default function PlayerButton (player, parent) {
     const selected_color = playerColors.indexOf(player.color);

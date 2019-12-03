@@ -1,4 +1,4 @@
-import { aiSpeeds, aiTypes, isPaused, cellStatus, playerColors, invertJson, leadingZero, trailingZero } from "./enums.js";
+import { aiSpeeds, aiTypes, isPaused, cellStatus, playerColors, invertJson, leadingZero, trailingZero } from "./global.js";
 
 export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = aiSpeeds.NORMAL) {
     var _aiType = aiType;
@@ -7,6 +7,7 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
     var prevDirection = cellStatus.SOUTH;
     var stepsTaken = 0;
     let startTime;
+    let isDisabled = false;
 
     const mazeReady = () => {
         window.removeEventListener('mazeReady', mazeReady);
@@ -45,7 +46,7 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
     this.canvasSprite = () => { return canvas; }
     this.canvasTrail = () => { return canvasTrail; }
 
-    this.forceColor = (color) => {
+    this.setColor = (color) => {
         spriteColor = color;
         switch (spriteColor) {
             case "pink":
@@ -63,6 +64,8 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
     }
     
     var logicLoop = function() {
+        if (isDisabled) return;
+
         if (isPaused()) {
             setTimeout(function() { logicLoop(); }, 1);
             return;
@@ -128,6 +131,10 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
             }
         }
         else setTimeout(function() { logicLoop(); }, _aiSpeed);
+    }
+
+    this.disable = () => {
+        isDisabled = true;
     }
 
     const showStats = () => {
@@ -301,24 +308,6 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
         }
     }
 
-    this.setColor = function (pretext) {
-        if (pretext === undefined) pretext = "";
-        spriteColor = prompt(pretext + "What color do you want to be?", "pink").toLowerCase();
-        if (!playerColors.some(c => c === spriteColor)) {
-            this.setColor("Sorry, you cannot be " + spriteColor + ".\n");
-        }
-        else {
-            switch (spriteColor) {
-                case "pink":
-                    spriteColor = "#FF3399";
-                    break;
-                case "green":
-                    spriteColor = "#00CC00";
-                    break;
-            }
-        }
-    }
-
     const toggleControls = function() {
         controlsEnabled = !controlsEnabled;
     }
@@ -357,8 +346,6 @@ export default function Ai (maze, aiType = aiTypes.UNVISITED_TURNS, aiSpeed = ai
         context.beginPath();
         context.arc(screenSpaceX + _maze.cellWidth() * 0.65, screenSpaceY + _maze.cellWidth() * 0.35, _maze.cellWidth() / 12, 0, Math.PI * 2);
         context.stroke();
-
-        //contextTrail.fillRect(screenSpaceX + _maze.cellWidth() * 0.25, screenSpaceY + _maze.cellWidth() * 0.25, _maze.cellWidth() - _maze.cellWidth() * 0.5, _maze.cellWidth() - _maze.cellWidth() * 0.5);
     }
 
     const toScreenSpace = function(n)  {

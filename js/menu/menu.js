@@ -1,6 +1,6 @@
 import PlayerButton from "./playerButton.js";
 import Menu_MazeSettings from "./menu_mazeSettings.js";
-import { isPaused } from "../enums.js"
+import { isPaused } from "../global.js"
 
 export default function Menu (settings, startGame) {
     const body = document.getElementsByTagName("body")[0];

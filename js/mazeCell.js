@@ -1,5 +1,3 @@
-import { cellStatus } from "./enums.js";
-
 export default function MazeCell (x = 0, y = 0) {
     this.status = [];
     this.hasStatus = (s) => { return this.status.indexOf(s) >= 0; }

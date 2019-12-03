@@ -1,4 +1,4 @@
-import { aiTypes, aiSpeeds } from "./enums.js";
+import { aiTypes, aiSpeeds } from "./global.js";
 
 export default function Settings () {
     return {

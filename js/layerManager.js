@@ -1,4 +1,4 @@
-import { isPaused } from "./enums.js";
+import { isPaused } from "./global.js";
 
 export default function LayerManager () {
     const _cycleSpeed = 500;

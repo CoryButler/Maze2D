@@ -2,7 +2,7 @@ import Settings from "./settings.js";
 import Menu from "./menu/menu.js";
 import LayerManager from "./layerManager.js";
 import Maze from "./maze.js";
-import { aiTypes, isPaused } from "./enums.js";
+import { aiTypes, isPaused } from "./global.js";
 import Player from "./player.js";
 import Ai from "./ai.js";
 
@@ -14,9 +14,11 @@ export default function Game ()
     let isRendering = false;
 
     const start = () => {
+        if (maze) maze.disable();
         layerManager.clearLayers();
         maze = new Maze(settings.seed, settings.width, settings.height);
         
+        players.forEach(p => p.disable());
         while (players.length > 0) players.pop();
 
         settings.players.forEach(p => {
@@ -27,7 +29,7 @@ export default function Game ()
             else
                 players.push(new Ai(maze, p.type, p.speed));
 
-            players[players.length - 1].forceColor(p.color);
+            players[players.length - 1].setColor(p.color);
         });
 
         players.forEach(player => {

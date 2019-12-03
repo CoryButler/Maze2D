@@ -1,11 +1,12 @@
 import MazeCell from "./mazeCell.js";
-import { cellStatus } from "./enums.js";
+import { cellStatus } from "./global.js";
 import Random from "./random.js";
 
 export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wallWidth = 2) {
     const random = new Random(seed);
     let mazeReady = new Event('mazeReady');
     let doNotRender = false;
+    let isDisabled = false;
 
     const onMazeReady = () => { 
         window.removeEventListener('mazeReady', onMazeReady);
@@ -138,6 +139,7 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wall
     }
 
     const createAnimate = function() {
+        if (isDisabled) return;
         if (visitedCellCount < columnCount * rowCount) {
             let neighbors = [];
     
@@ -194,6 +196,10 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wall
         {
             window.dispatchEvent(mazeReady);
         }
+    }
+
+    this.disable = () => {
+        isDisabled = true;
     }
 
     const offsetX = function(x) {
@@ -399,29 +405,6 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wall
 
                 if (cells[x][y].hasStatus(cellStatus.VISITED) && cells[x][y].hasStatus(cellStatus.END))
                     context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth, y * (_cellWidth + _wallWidth) + _wallWidth + _cellWidth, _cellWidth, _wallWidth);
-
-                context.fillStyle = spriteColor;
-
-                if (cells[x][y].hasStatus(cellStatus.STEPPED)) {
-                    if ((cells[x][y].hasStatus(cellStatus.NORTH) &&
-                        cells[x][y - 1].hasStatus(cellStatus.STEPPED)) ||
-                        cells[x][y].hasStatus(cellStatus.START)) {
-                        context.fillRect(x * (_cellWidth + _wallWidth) + ((_cellWidth /2) - (_wallWidth / 2)) + _wallWidth, y * (_cellWidth + _wallWidth) + ((_cellWidth / 2) - (_wallWidth / 2)) + _wallWidth, _wallWidth, -_cellWidth);
-                    }
-                    if ((cells[x][y].hasStatus(cellStatus.SOUTH) &&
-                        cells[x][y + 1].hasStatus(cellStatus.STEPPED)) ||
-                        cells[x][y].hasStatus(cellStatus.END)) {
-                        context.fillRect(x * (_cellWidth + _wallWidth) + ((_cellWidth /2) - (_wallWidth / 2)) + _wallWidth, y * (_cellWidth + _wallWidth) + ((_cellWidth / 2) - (_wallWidth / 2)) + _wallWidth, _wallWidth, _cellWidth);
-                    }
-                    if (cells[x][y].hasStatus(cellStatus.WEST) &&
-                        cells[x - 1][y].hasStatus(cellStatus.STEPPED)) {
-                        context.fillRect(x * (_cellWidth + _wallWidth) + ((_cellWidth /2) + (_wallWidth / 2)) + _wallWidth, y * (_cellWidth + _wallWidth) + ((_cellWidth / 2) - (_wallWidth / 2)) + _wallWidth, -_cellWidth, _wallWidth);
-                    }
-                    if (cells[x][y].hasStatus(cellStatus.EAST) &&
-                        cells[x + 1][y].hasStatus(cellStatus.STEPPED)) {
-                        context.fillRect(x * (_cellWidth + _wallWidth) + ((_cellWidth /2) - (_wallWidth / 2)) + _wallWidth, y * (_cellWidth + _wallWidth) + ((_cellWidth / 2) - (_wallWidth / 2)) + _wallWidth, _cellWidth, _wallWidth);
-                    }
-                }
             }
         }
     }

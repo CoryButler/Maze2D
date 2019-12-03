@@ -1,4 +1,4 @@
-import { aiTypes, cellStatus, isPaused, playerColors, aiSpeeds, invertJson, leadingZero, trailingZero } from "./enums.js";
+import { aiTypes, cellStatus, isPaused, playerColors, aiSpeeds, invertJson, leadingZero, trailingZero } from "./global.js";
 
 export default function Player(maze, id) {
     var _maze = maze;
@@ -90,6 +90,8 @@ export default function Player(maze, id) {
         }
     }
 
+    this.disable = () => {}
+
     const showStats = () => {
         const hud = document.getElementById("hud");
 
@@ -144,7 +146,7 @@ export default function Player(maze, id) {
 
     document.addEventListener("keyup", handler);
 
-    this.forceColor = (color) => {
+    this.setColor = (color) => {
         spriteColor = color;
         switch (spriteColor) {
             case "pink":
@@ -155,25 +157,6 @@ export default function Player(maze, id) {
                 break;
         }
         contextTrail.fillStyle = spriteColor;
-    }
-
-    this.setColor = function (pretext) {
-        if (pretext === undefined) pretext = "";
-        spriteColor = prompt(pretext + "What color do you want to be?", "pink").toLowerCase();
-        if (!playerColors.some(c => c === spriteColor)) {
-            this.setColor("Sorry, you cannot be " + spriteColor + ".\n");
-        }
-        else {
-            switch (spriteColor) {
-                case "pink":
-                    spriteColor = "#FF3399";
-                    break;
-                case "green":
-                    spriteColor = "#00CC00";
-                    break;
-            }
-			contextTrail.fillStyle = spriteColor;
-        }
     }
 
     const toggleControls = function() {
