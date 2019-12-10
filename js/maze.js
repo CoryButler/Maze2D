@@ -12,7 +12,7 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wall
         window.removeEventListener('mazeReady', onMazeReady);
         setEndCell();
         setDijkstraValues();
-        render();
+        render(true);
         doNotRender = true;
     }
     
@@ -77,6 +77,7 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wall
 
     this.create = function(color, animate = true) {
         spriteColor = color;
+        initRender();
         if (animate)
             createAnimate();
         else
@@ -134,7 +135,6 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wall
                 cellStack.pop();
             }
         }
-        render();
         window.dispatchEvent(mazeReady);
     }
 
@@ -190,7 +190,7 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wall
                 cellStack.pop();
             }
             render();
-            setTimeout(function() {createAnimate();}, 1);
+            setTimeout(function() {createAnimate();}, 0);
         }
         else
         {
@@ -285,7 +285,7 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wall
         endCell = bestCell;
         cells[endCell.x][endCell.y].status.push(cellStatus.END);
         
-        for (let i = 0; i < rowCount; i++) {
+        /* for (let i = 0; i < rowCount; i++) {
             let toLog = "";
             for (let j = 0; j < columnCount; j++) {
                 toLog += cellValues[j][i].distanceFromStart + " ";
@@ -301,20 +301,12 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wall
                 toLog += cellValues[j][i].decisionsFromStart + " ";
             }
             console.log(toLog);
-        }
+        } */
     }
 
     const setDijkstraValues = () => {
-        //let cells = [];
         let currentX = endCell.x;
         let currentY = endCell.y;
-
-        /* for (let i = 0; i < columnCount; i++) {
-            cells.push([]);
-            for (let j = 0; j < rowCount; j++) {
-                cells[i].push({});
-            }
-        } */
 
         let frontier = [cells[currentX][currentY]];
 
@@ -356,7 +348,7 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wall
             });
         }
 
-        for (let i = 0; i < rowCount; i++) {
+        /* for (let i = 0; i < rowCount; i++) {
             let toLog = "";
             for (let j = 0; j < columnCount; j++) {
                 toLog += cells[j][i].dijkstra + " ";
@@ -364,7 +356,7 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wall
             console.log(toLog);
         }
 
-        console.log();
+        console.log(); */
     }
     
     const getNeighbors = function (cell) {
@@ -376,36 +368,55 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wall
         return neighbors;
     }
 
-    this.render = function() { if (!doNotRender) render(); }
-    const render = function() {
+    const initRender = () => {
         context.fillStyle = "#000000";
         context.fillRect(0, 0, _width, _height);
+        context.fillStyle = spriteColor;
+
         for (let x = 0; x < columnCount; x++) {
             for (let y = 0; y < rowCount; y++) {
-                if (x === cellStack[cellStack.length - 1].x && y === cellStack[cellStack.length - 1].y && visitedCellCount < columnCount * rowCount) {
-                    context.fillStyle = spriteColor;
-                }
-                else if (cells[x][y].hasStatus(cellStatus.VISITED)) {
-                    context.fillStyle = "#FFFFFF";
-                }
-                else {
-                    context.fillStyle = spriteColor;
-                }
-                
                 context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth, y * (_cellWidth + _wallWidth) + _wallWidth, _cellWidth, _cellWidth);
-    
-                if (cells[x][y].hasStatus(cellStatus.SOUTH))
-                    context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth, y * (_cellWidth + _wallWidth) + _wallWidth + _cellWidth, _cellWidth, _wallWidth);
-                
-                if (cells[x][y].hasStatus(cellStatus.EAST))
-                    context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth + _cellWidth, y * (_cellWidth + _wallWidth) + _wallWidth, _wallWidth, _cellWidth);
-
-                if (cells[x][y].hasStatus(cellStatus.VISITED) && cells[x][y].hasStatus(cellStatus.START))
-                    context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth, y * (_cellWidth + _wallWidth), _cellWidth, _wallWidth);
-
-                if (cells[x][y].hasStatus(cellStatus.VISITED) && cells[x][y].hasStatus(cellStatus.END))
-                    context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth, y * (_cellWidth + _wallWidth) + _wallWidth + _cellWidth, _cellWidth, _wallWidth);
             }
         }
+    }
+
+    const cellInRange = (x, y) => {
+        return (
+            x >= cellStack[cellStack.length - 1].x - 1 &&
+            x <= cellStack[cellStack.length - 1].x + 1 &&
+            y >= cellStack[cellStack.length - 1].y - 1 &&
+            y <= cellStack[cellStack.length - 1].y + 1
+        );
+    }
+
+    const render = (drawEndCell = false) => {
+        cells.forEach(col => {
+            col.forEach(row => {
+                
+                if (row.hasStatus(cellStatus.VISITED) && (cellInRange(row.x, row.y) || drawEndCell)) {
+                    let x = row.x;
+                    let y = row.y;
+                    context.fillStyle = "#FFFFFF";
+
+                    if (x === cellStack[cellStack.length - 1].x && y === cellStack[cellStack.length - 1].y && visitedCellCount < columnCount * rowCount) {
+                        context.fillStyle = spriteColor;
+                    }
+
+                    context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth, y * (_cellWidth + _wallWidth) + _wallWidth, _cellWidth, _cellWidth);
+
+                    if (cells[x][y].hasStatus(cellStatus.SOUTH))
+                        context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth, y * (_cellWidth + _wallWidth) + _wallWidth + _cellWidth, _cellWidth, _wallWidth);
+                    
+                    if (cells[x][y].hasStatus(cellStatus.EAST))
+                        context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth + _cellWidth, y * (_cellWidth + _wallWidth) + _wallWidth, _wallWidth, _cellWidth);
+
+                    if (cells[x][y].hasStatus(cellStatus.VISITED) && cells[x][y].hasStatus(cellStatus.START))
+                        context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth, y * (_cellWidth + _wallWidth), _cellWidth, _wallWidth);
+
+                    if (cells[x][y].hasStatus(cellStatus.VISITED) && cells[x][y].hasStatus(cellStatus.END))
+                        context.fillRect(x * (_cellWidth + _wallWidth) + _wallWidth, y * (_cellWidth + _wallWidth) + _wallWidth + _cellWidth, _cellWidth, _wallWidth);
+                }
+            })
+        });
     }
 }

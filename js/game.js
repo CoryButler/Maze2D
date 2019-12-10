@@ -45,7 +45,6 @@ export default function Game ()
     
     const renderLoop = function() {
         if (!isPaused()) {
-            maze.render();
             players.forEach(player => { player.render(); });
         }
         setTimeout(() => { renderLoop(); }, 1);

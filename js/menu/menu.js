@@ -118,4 +118,14 @@ export default function Menu (settings, startGame) {
             document.getElementsByClassName("stat")[0].remove();
         }
     }
+
+    /* window.addEventListener("keypress", (e) => {
+        if (e.key === "a") {
+            clearStats();
+            updateSettings();
+            closeMenu();
+            startGame();
+            downloadButton.click();
+        }
+    }); */
 }
