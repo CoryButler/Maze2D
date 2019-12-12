@@ -5,6 +5,7 @@ import Maze from "./maze.js";
 import { aiTypes, isPaused } from "./global.js";
 import Player from "./player.js";
 import Ai from "./ai.js";
+import VirtualController from "./virtualController.js";
 
 export default function Game ()
 {
@@ -38,6 +39,14 @@ export default function Game ()
         });
 
         maze.create(players.length > 0 ? players[0].spriteColor() : "grey", settings.animate);
+
+        if (settings.players.some(p => p.type === aiTypes.PLAYER_1 && p.isChecked)) {
+            let ctrl = new VirtualController();
+            document.getElementsByTagName("body")[0].appendChild(ctrl.div);
+        }
+        else if (document.getElementById("virtualController")) {
+            document.getElementById("virtualController").remove();
+        }
 
         if (!isRendering) renderLoop();
         isRendering = true;

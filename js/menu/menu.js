@@ -81,6 +81,9 @@ export default function Menu (settings, startGame) {
 
         let c = document.getElementsByTagName("canvas");
         for (let i = 0; i < c.length; i++) c[i].style.display = "none";
+
+        if (document.getElementById("virtualController"))
+            document.getElementById("virtualController").style.display = "none";
     }
 
     const closeMenu = () =>  {
@@ -91,6 +94,9 @@ export default function Menu (settings, startGame) {
         
         let c = document.getElementsByTagName("canvas");
         for (let i = 0; i < c.length; i++) c[i].style.display = "unset";
+
+        if (document.getElementById("virtualController"))
+            document.getElementById("virtualController").style.display = "unset";
     }
 
     const updateSettings = () => {

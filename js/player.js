@@ -46,6 +46,7 @@ export default function Player(maze, id) {
     let animatingSprite = false;
 
     var handler = function(key) {
+        console.log(key);
         if (isPaused() || animatingSprite || !controlsEnabled) return;
         
         var prevX = x;

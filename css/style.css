@@ -36,3 +36,19 @@ canvas {
 label {
    font-size: 0.8em;
 }
+
+#virtualController {
+   margin: 0;
+   position: absolute;
+   left: 50%;
+   top: 100%;
+   transform: translate(-50%, -100%);
+}
+
+#virtualController div {
+   display: flex;
+}
+
+#virtualController div button {
+   display: flex;
+}
