@@ -5,7 +5,6 @@ import Random from "./random.js";
 export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wallWidth = 2) {
     const random = new Random(seed);
     let mazeReady = new Event('mazeReady');
-    let doNotRender = false;
     let isDisabled = false;
 
     const onMazeReady = () => { 
@@ -13,7 +12,6 @@ export default function Maze(seed, width = 32, height = 16, cellWidth = 30, wall
         setEndCell();
         setDijkstraValues();
         render(true);
-        doNotRender = true;
     }
     
     window.addEventListener('mazeReady', onMazeReady);
