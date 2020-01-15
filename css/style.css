@@ -55,13 +55,15 @@ label {
 }
 
 #virtualController div button {
+   margin: 4px;
    width: 33%;
-   height: 100%;
-   background-color: darkgrey;
-   border: 1px solid grey;
-   border-radius: 0px;
+   background-color: lightgrey;
+   border: 1px solid darkgrey;
+   border-bottom: 4px solid grey;
+   border-radius: 16px;
    font-weight: bold;
-   font-size: 4em;
+   font-size: 3em;
+   font-family: Arial, Helvetica, sans-serif;
 }
 
 @media only screen and (min-width: 1024px){

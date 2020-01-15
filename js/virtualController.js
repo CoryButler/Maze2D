@@ -12,7 +12,7 @@ export default function VirtualController (player1) {
     right.innerHTML = "&RightArrow;";
     up.innerHTML = "&UpArrow;";
     down.innerHTML = "&DownArrow;";
-    back.innerHTML = "<<";
+    back.innerHTML = "<";
 
     left.onclick = () => { dispatchKey("a"); };
     right.onclick = () => { dispatchKey("d"); };
