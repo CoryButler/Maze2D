@@ -9,6 +9,11 @@ body {
    font-family: 'Poppins', sans-serif;
 }
 
+input {
+   height: 1rem;
+   margin: auto;
+}
+
 .btn {
    background: lightgrey;
    border: 1px solid darkgrey;
@@ -109,6 +114,16 @@ body {
    padding: 0.5rem
 }
 
+.grid-left-align {
+   justify-self: left;
+   margin: auto 0.5rem;
+}
+
+.grid-right-align {
+   justify-self: right;
+   margin: auto 0.5rem;
+}
+
 .grid-span-four {
    grid-column: span 4;
 }
@@ -122,7 +137,7 @@ body {
 }
 
 .grid-temp-two {
-   grid-template-columns: 3fr 1fr;
+   grid-template-columns: 4fr 1fr;
 }
 
 .settings--separator {

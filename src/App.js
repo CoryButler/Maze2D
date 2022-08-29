@@ -11,7 +11,7 @@ export default function App() {
 
     function setAnimate(arg) {
         setSettings(prev => {
-            return { ...prev, animate: arg };
+            return { ...prev, animate: !prev.animate };
         });
     }
 
@@ -22,8 +22,13 @@ export default function App() {
     }
 
     function setPlayers(arg) {
-        setSettings(prev => {
-            return { ...prev, players: arg };
+        setSettings(prev => { 
+            return ({
+                ...prev,
+                players: [...prev.players].map(p => {
+                    return p.type === arg.type ? {...p, isChecked: !p.isChecked } : {...p};
+                })
+            });
         });
     }
 
@@ -35,7 +40,7 @@ export default function App() {
 
     function setUseSeed(arg) {
         setSettings(prev => {
-            return { ...prev, useSeed: arg };
+            return { ...prev, useSeed: !prev.useSeed };
         });
     }
 
@@ -48,7 +53,7 @@ export default function App() {
     return (
         <>
             <Header settings={settings} />
-            <Menu settings={settings} />
+            <Menu settings={settings} setAnimate={setAnimate} setPlayers={setPlayers} setUseSeed={setUseSeed} />
             <Hud settings={settings} />
             <Maze settings={settings} />
             <Footer />

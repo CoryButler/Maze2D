@@ -3,7 +3,7 @@ export default function Menu(props) {
     const playerSettings = props.settings.players.map((p, i) => {
         return (
             <>
-                <input key={key++} type="checkbox" checked={p.isChecked} />
+                <input key={key++} type="checkbox" checked={p.isChecked} onChange={() => props.setPlayers(p)} />
                 <p key={key++}>{p.type}</p>
                 { p.controls && <p key={key++}>p.controls</p> }
                 { p.speed && <p key={key++}>p.speed</p> }
@@ -15,20 +15,20 @@ export default function Menu(props) {
 
     const mazeSettings = (
         <>
-            <p key={key++}>Width (in cells)</p>
-            <p key={key++}>10</p>
-            <div key={key++} className="settings--separator grid-span-two"></div>
-            <p key={key++}>Height (in cells)</p>
-            <p key={key++}>10</p>
-            <div key={key++} className="settings--separator grid-span-two"></div>
-            <p key={key++}>Use Seed</p>
-            <input key={key++} type="checkbox" checked={props.settings.useSeed} />
-            <div key={key++} className="settings--separator grid-span-two"></div>
-            <p key={key++}>Seed</p>
-            <p key={key++}>81726354</p>
-            <div key={key++} className="settings--separator grid-span-two"></div>
-            <p key={key++}>Animate Creation</p>
-            <input key={key++} type="checkbox" checked={props.settings.useSeed} />
+            <p className="grid-left-align">Width (in cells)</p>
+            <p className="grid-right-align">10</p>
+            <div className="settings--separator grid-span-two"></div>
+            <p className="grid-left-align">Height (in cells)</p>
+            <p className="grid-right-align">10</p>
+            <div className="settings--separator grid-span-two"></div>
+            <p className="grid-left-align">Use Seed</p>
+            <input type="checkbox" checked={props.settings.useSeed} className="grid-right-align" onChange={props.setUseSeed} />
+            <div className="settings--separator grid-span-two"></div>
+            <p className="grid-left-align">Seed</p>
+            <p className="grid-right-align">81726354</p>
+            <div className="settings--separator grid-span-two"></div>
+            <p className="grid-left-align">Animate Creation</p>
+            <input type="checkbox" checked={props.settings.animate} className="grid-right-align" onChange={props.setAnimate} />
         </>
     );
 
