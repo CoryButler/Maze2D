@@ -5,6 +5,7 @@ import Menu from "./components/Menu";
 import Hud from "./components/Hud";
 import Maze from "./components/Maze";
 import Footer from "./components/Footer";
+import { maxCell, maxSeed } from "./global";
 
 export default function App() {
     const [settings, setSettings] = React.useState(Settings);
@@ -16,8 +17,9 @@ export default function App() {
     }
 
     function setHeight(arg) {
+        if (arg.target.value < 2 || arg.target.value > maxCell) return;
         setSettings(prev => {
-            return { ...prev, height: arg };
+            return { ...prev, height: arg.target.value };
         });
     }
 
@@ -33,8 +35,9 @@ export default function App() {
     }
 
     function setSeed(arg) {
+        if (arg.target.value < 0 || arg.target.value > maxSeed) return;
         setSettings(prev => {
-            return { ...prev, seed: arg };
+            return { ...prev, seed: arg.target.value };
         });
     }
 
@@ -45,15 +48,16 @@ export default function App() {
     }
 
     function setWidth(arg) {
+        if (arg.target.value < 2 || arg.target.value > maxCell) return;
         setSettings(prev => {
-            return { ...prev, width: arg };
+            return { ...prev, width: arg.target.value };
         });
     }
 
     return (
         <>
             <Header settings={settings} />
-            <Menu settings={settings} setAnimate={setAnimate} setPlayers={setPlayers} setUseSeed={setUseSeed} />
+            <Menu settings={settings} setAnimate={setAnimate} setHeight={setHeight} setPlayers={setPlayers} setSeed={setSeed} setUseSeed={setUseSeed} setWidth={setWidth} />
             <Hud settings={settings} />
             <Maze settings={settings} />
             <Footer />

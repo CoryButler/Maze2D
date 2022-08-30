@@ -1,19 +1,20 @@
-import { aiTypes, aiSpeeds } from "./global.js";
+import { aiTypes, aiSpeeds, maxSeed } from "./global.js";
 
 export default {
+    isPaused: false,
     width: 10,
     height: 10,
     animate: true,
     useSeed: false,
-    seed: 1,
+    seed: Math.round(Math.random() * maxSeed),
     players: [
-        { type: aiTypes.PLAYER_1, color: "green", controls: "WASD(Q)", isChecked: true },
-        { type: aiTypes.PLAYER_2, color: "pink", controls: "🡡🡠🡣🡢(Enter)", isChecked: false },
-        { type: aiTypes.RANDOM, color: "red", speed: aiSpeeds.NORMAL, isChecked: false },
-        { type: aiTypes.RANDOM_TURNS, color: "orange", speed: aiSpeeds.NORMAL, isChecked: false },
-        { type: aiTypes.UNVISITED_TURNS, color: "blue", speed: aiSpeeds.NORMAL, isChecked: false },
-        { type: aiTypes.RIGHT_HAND, color: "purple", speed: aiSpeeds.NORMAL, isChecked: false },
-        { type: aiTypes.LEFT_HAND, color: "yellow", speed: aiSpeeds.NORMAL, isChecked: false },
-        { type: aiTypes.DIJKSTRA, color: "red", speed: aiSpeeds.NORMAL, isChecked: false }
+        { type: aiTypes[0], color: "green", controls: "W A S D (Q)", isChecked: true },
+        { type: aiTypes[1], color: "pink", controls: "🡡 🡠 🡣 🡢 (Enter)", isChecked: false },
+        { type: aiTypes[2], color: "red", speed: aiSpeeds.filter(a => a.name === "Normal")[0], isChecked: false },
+        { type: aiTypes[3], color: "orange", speed: aiSpeeds.filter(a => a.name === "Normal")[0], isChecked: false },
+        { type: aiTypes[4], color: "blue", speed: aiSpeeds.filter(a => a.name === "Normal")[0], isChecked: false },
+        { type: aiTypes[5], color: "purple", speed: aiSpeeds.filter(a => a.name === "Normal")[0], isChecked: false },
+        { type: aiTypes[6], color: "yellow", speed: aiSpeeds.filter(a => a.name === "Normal")[0], isChecked: false },
+        { type: aiTypes[7], color: "red", speed: aiSpeeds.filter(a => a.name === "Normal")[0], isChecked: false }
     ]
 }

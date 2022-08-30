@@ -1,7 +1,15 @@
-const aiTypes = { PLAYER_1: 0, PLAYER_2: 1, RANDOM: 2, RANDOM_TURNS: 3, UNVISITED_TURNS: 4, RIGHT_HAND: 5, LEFT_HAND: 6, DIJKSTRA: 7 };
-const aiSpeeds = { VERY_SLOW: 2000, SLOW: 1000, NORMAL: 500, FAST: 250, VERY_FAST: 125, SUPER_FAST: 1, TELEPORT: 0 };
+const aiTypes = ["Player One", "Player Two", "Random Steps", "Random Turns", "Unvisited Turns", "Right-Hand Turns", "Left-Hand Turns", "Dijkstra Algorithm"];
+const aiSpeeds = [
+    { name: "Very Slow", speed: 2000 },
+    { name: "Slow", speed: 1000 },
+    { name: "Normal", speed: 500 },
+    { name: "Fast", speed: 250 },
+    { name: "Very Fast", speed: 125 },
+    { name: "Teleport", speed: 0 }];
 const playerColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink'];
 const cellStatus = { EAST: 0, NORTH: 1, WEST: 2, SOUTH: 3, VISITED: 4, START: 5, END: 6, STEPPED: 7 };
+const maxSeed = 9999999999;
+const maxCell = 100;
 let _isPaused = false;
 const isPaused = (value = null) => { if (value !== null) _isPaused = value; return _isPaused; }
     
@@ -28,4 +36,4 @@ const trailingZero = (num, length = 3) => {
     return n;
 }
 
-export { aiTypes, aiSpeeds, isPaused, playerColors, cellStatus, invertJson, leadingZero, trailingZero };
+export { aiTypes, aiSpeeds, isPaused, playerColors, cellStatus, invertJson, leadingZero, maxCell, maxSeed, trailingZero };

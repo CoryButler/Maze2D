@@ -1,24 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
 * {
+   box-sizing: border-box;
+   font-family: 'Poppins', sans-serif;
+   font-size: 1rem;
    margin: 0;
    padding: 0;
 }
 
-body {
-   font-family: 'Poppins', sans-serif;
+option {
+   background: white;
 }
 
-input {
-   height: 1rem;
-   margin: auto;
+select {
+   appearance: none;
+   background: linear-gradient(lightgrey 0%, white 60%);
+   border: 0;
+   border-radius: 0.25rem;
+   box-shadow: inset 0 0 0.25rem grey;
+   padding: 0.125rem 2rem 0.125rem 0.5rem;
+}
+
+select:hover {
+   cursor: pointer;
 }
 
 .btn {
    background: lightgrey;
    border: 1px solid darkgrey;
-   border-radius: 0.25rem;
+   border-radius: 0.5rem;
+   flex: 0.5;
    padding: 0.25rem 0.5rem;
+   text-align: center;
    transition: 250ms;
 }
 
@@ -28,6 +41,31 @@ input {
    box-shadow: 0 0 0.5rem darkgrey;
    color: white;
    cursor: pointer;
+}
+
+.custom-select {
+   pointer-events: none;
+   position: relative;
+   --rot: 90deg;
+}
+
+.custom-select > select {
+   pointer-events: auto;
+   width: 100%;
+}
+
+.custom-select:focus-within {
+   --rot: -90deg;
+}
+
+.custom-arrow {
+   pointer-events: none;
+   position: absolute;
+   right: 0.75rem;
+   top: 0.125rem;
+   transform: rotate(var(--rot));
+   user-select: none;
+   transition: 250ms;
 }
 
 .flex-center {
@@ -50,10 +88,12 @@ input {
    position: fixed;
    text-align: center;
    width: 100%;
+   z-index: -1;
 }
 
 .header {
    align-items: center;
+   background: white;
    box-shadow: 0 0 1rem darkgrey;
    display: flex;
    justify-content: space-between;
@@ -70,12 +110,31 @@ input {
    font-size: 2rem;
 }
 
+.input-checkbox {
+   height: 1rem;
+   margin: 0.4rem 0;
+}
+
+.input-number {
+   background: linear-gradient(lightgrey 0%, white 60%);
+   border: 0;
+   border-radius: 0.25rem;
+   box-shadow: inset 0 0 0.25rem grey;
+   padding: 0.125rem 2rem 0.125rem 0.5rem;
+}
+
+.input-number:focus {
+   outline: none;
+}
+
 .menu {
+   background: white;
    border: 1px solid grey;
-   border-radius: 0.5rem;
-   box-shadow: 0 0 1rem darkgrey;
+   border-radius: 1rem;
+   box-shadow: 0 0 3rem darkgrey;
    display: flex;
    flex-direction: column;
+   overflow: hidden;
 }
 
 .menu--buttons-container {
@@ -90,80 +149,49 @@ input {
    margin: 0.5rem;
 }
 
-.menu--settings-container > div:first-child {
-   flex: 3;
-}
-
-.menu--settings-container > div:last-child {
-   flex: 2;
-}
-
 .menu--title {
    background: grey;
+   box-shadow: inset 0 0 2rem black;
    color: white;
    font-size: 2rem;
    margin: 0.5rem 0 0 0;
    text-align: center;
+   text-shadow: 0.0625rem 0.0625rem 0.25rem black;
 }
 
 .settings {
    border: 1px solid grey;
-   border-radius: 0.25rem;
-   display: grid;
-   gap: 0.5rem 1rem;
-   padding: 0.5rem
-}
-
-.grid-left-align {
-   justify-self: left;
-   margin: auto 0.5rem;
-}
-
-.grid-right-align {
-   justify-self: right;
-   margin: auto 0.5rem;
-}
-
-.grid-span-four {
-   grid-column: span 4;
-}
-
-.grid-span-two {
-   grid-column: span 2;
-}
-
-.grid-temp-four {
-   grid-template-columns: 1fr 3fr 3fr 3fr;
-}
-
-.grid-temp-two {
-   grid-template-columns: 4fr 1fr;
-}
-
-.settings--separator {
-   border-bottom: 1px solid lightgrey;
-}
-
-/*
-.options-row {
-   align-items: center;
-   display: flex;
-   gap: 1rem;
-   justify-content: space-between;
-}
-
-.options-row--section {
-   align-items: center;
-   display: flex;
-   gap: 1rem;
-}
-
-.settings {
-   border: 1px solid grey;
-   border-radius: 0.25rem;
+   border-radius: 0.5rem;
    display: flex;
    flex-direction: column;
-   gap: 0.5rem;
-   padding: 0.5rem
+   padding: 0 0.5rem;
 }
-*/
+
+.flex-row {
+   align-items: center;
+   border-bottom: 1px solid lightgrey;
+   display: flex;
+   gap: 0.5rem;
+   justify-content: start;
+   padding: 0.5rem 0;
+}
+
+.flex-row:last-child {
+   border-bottom: 0px solid lightgrey;
+}
+
+.four-item-row > * {
+   width: 9rem;
+}
+
+.four-item-row > *:first-child {
+   width: 1rem;
+}
+
+.two-item-row > * {
+   width: 9rem;
+}
+
+.two-item-row > .input-checkbox {
+   width: 1rem;
+}
