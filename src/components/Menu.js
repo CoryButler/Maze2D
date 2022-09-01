@@ -15,16 +15,16 @@ export default function Menu(props) {
         });
         return (
             <div className="flex-row four-item-row" key={key++}>
-                <input key={key++} className="input-checkbox" type="checkbox" checked={p.isChecked} onChange={() => props.setPlayers(p)} />
+                <input key={key++} className="input-checkbox" type="checkbox" checked={p.isChecked} onChange={() => props.setPlayers({...p, isChecked: !p.isChecked})} />
                 <p key={key++}>{p.type}</p>
                 { p.controls && <p>{p.controls}</p> }
                 { p.speed && <div className="custom-select">
                     <div className="custom-arrow">{">"}</div>
-                    <select key={key++} name="s1" id="s2" defaultValue={p.speed.name}>{select_aiSpeed}</select>
+                    <select key={key++} defaultValue={p.speed.name} onChange={(evt) => props.setPlayers({...p, speed: evt.target.value})}>{select_aiSpeed}</select>
                 </div> }
                 <div className="custom-select">
                     <div className="custom-arrow">{">"}</div>
-                    <select key={key++} name="c1" id="c2" defaultValue={p.color}>{select_colors}</select>
+                    <select key={key++} defaultValue={p.color} onChange={(evt) => props.setPlayers({...p, color: evt.target.value})}>{select_colors}</select>
                 </div>
             </div>
         );
@@ -54,7 +54,7 @@ export default function Menu(props) {
     ];
 
     return (
-        <div className="flex-center">
+        <div className={"menu-container flex-center" + (props.settings.isPaused ? "" : " menu-hide")}>
             <div className="menu">
                 <div className="menu--title">Settings</div>
                 <div className="menu--settings-container">
@@ -66,8 +66,8 @@ export default function Menu(props) {
                             {mazeSettings}
                         </div>
                         <div className="menu--buttons-container">
-                            { props.settings.isPaused && <div className="btn btn-cancel">Cancel</div> }
-                            <div className="btn btn-new">New Game</div>
+                            { props.settings.isActiveGame && <div className="menu-btn menu-btn-cancel" onClick={props.cancel}>Cancel</div> }
+                            <div className="menu-btn menu-btn-new" onClick={props.newGame}>New Game</div>
                         </div>
                     </div>
                 </div>

@@ -1,11 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
+:root {
+   --accent: green;
+   --accent-dark: darkgreen;
+   --transition-speed: 250ms;
+}
+
 * {
    box-sizing: border-box;
    font-family: 'Poppins', sans-serif;
    font-size: 1rem;
    margin: 0;
    padding: 0;
+}
+
+input {
+   outline: none;
 }
 
 option {
@@ -19,6 +29,7 @@ select {
    border-radius: 0.25rem;
    box-shadow: inset 0 0 0.25rem grey;
    padding: 0.125rem 2rem 0.125rem 0.5rem;
+   outline: none;
 }
 
 select:hover {
@@ -26,27 +37,39 @@ select:hover {
 }
 
 .btn {
-   background: lightgrey;
-   border: 1px solid darkgrey;
-   border-radius: 0.5rem;
-   flex: 0.5;
-   padding: 0.25rem 0.5rem;
-   text-align: center;
-   transition: 250ms;
+   align-items: center;
+   background: white;
+   border-radius: 1rem;
+   box-shadow: 0 0 0.5rem darkgrey;
+   display: flex;
+   gap: 0.5rem;
+   justify-content: center;
+   padding: 0.25rem 0.75rem;
+   position: relative;
+   transition: var(--transition-speed);
+   user-select: none;
+   width: fit-content;
 }
 
 .btn:hover {
-   background: darkgrey;
-   border: 1px solid grey;
-   box-shadow: 0 0 0.5rem darkgrey;
-   color: white;
+   box-shadow: 0 0 0.5rem black;
+   background: lightgrey;
    cursor: pointer;
+}
+
+.btn-open-menu {
+   left: 1rem;
+   top: 1rem;
+}
+
+.btn-open-menu-hide {
+   top: -3rem;
 }
 
 .custom-select {
    pointer-events: none;
    position: relative;
-   --rot: 90deg;
+   --rot-select-arrow: 90deg;
 }
 
 .custom-select > select {
@@ -55,7 +78,7 @@ select:hover {
 }
 
 .custom-select:focus-within {
-   --rot: -90deg;
+   --rot-select-arrow: -90deg;
 }
 
 .custom-arrow {
@@ -63,9 +86,22 @@ select:hover {
    position: absolute;
    right: 0.75rem;
    top: 0.125rem;
-   transform: rotate(var(--rot));
+   transform: rotate(var(--rot-select-arrow));
    user-select: none;
-   transition: 250ms;
+   transition: var(--transition-speed);
+}
+
+.download {
+   align-items: center;
+   display: flex;
+   gap: 0.5rem;
+   transition: var(--transition-speed);
+   user-select: none;
+}
+
+.download:hover {
+   color: grey;
+   cursor: pointer;
 }
 
 .flex-center {
@@ -98,12 +134,21 @@ select:hover {
    display: flex;
    justify-content: space-between;
    padding: 0.5rem 1rem;
+   position: relative;
+   z-index: 1;
+}
+
+.header--hud-hide {
+   opacity: 0;
+   pointer-events: none;
+   user-select: none;
 }
 
 .header--hud {
    align-items: center;
    display: flex;
    gap: 1rem;
+   transition: var(--transition-speed);
 }
 
 .header--title {
@@ -120,11 +165,62 @@ select:hover {
    border: 0;
    border-radius: 0.25rem;
    box-shadow: inset 0 0 0.25rem grey;
-   padding: 0.125rem 2rem 0.125rem 0.5rem;
+   padding: 0.125rem 0.375rem 0.125rem 0.5rem;
 }
 
-.input-number:focus {
-   outline: none;
+.maze-container {
+   padding-bottom: 10rem;
+   perspective: 100rem;
+   position: absolute;
+   width: 100%;
+   --rot-maze: 0deg;
+   --opacity-maze: 1;
+}
+
+.maze-hide {
+   pointer-events: none;
+   user-select: none;
+   --rot-maze: -90deg;
+   --opacity-maze: 0;
+}
+
+.maze {
+   align-items: center;
+   background: white;
+   border: 1px solid grey;
+   border-radius: 1rem;
+   box-shadow: 0 0 3rem darkgrey;
+   display: flex;
+   justify-content: center;
+   opacity: var(--opacity-maze);
+   padding: 1rem;
+   transform: rotateY(var(--rot-maze));
+   transform-origin: right;
+   transition: var(--transition-speed) ease-in-out;
+}
+
+.menu-container {
+   padding-bottom: 10rem;
+   perspective: 100rem;
+   position: absolute;
+   width: 100%;
+   --rot-menu: 0deg;
+   --opacity-menu: 1;
+}
+
+.menu-hide {
+   --rot-menu: 90deg;
+   --opacity-menu: 0;
+}
+
+.menu-hide * {
+   pointer-events: none;
+   user-select: none;
+}
+
+.menu-hide select {
+   pointer-events: none;
+   user-select: none;
 }
 
 .menu {
@@ -134,7 +230,30 @@ select:hover {
    box-shadow: 0 0 3rem darkgrey;
    display: flex;
    flex-direction: column;
+   opacity: var(--opacity-menu);
    overflow: hidden;
+   transform: rotateY(var(--rot-menu));
+   transform-origin: left;
+   transition: var(--transition-speed) ease-in-out;
+}
+
+.menu-btn {
+   background: lightgrey;
+   border: 1px solid darkgrey;
+   border-radius: 0.5rem;
+   flex: 0.5;
+   padding: 0.25rem 0.5rem;
+   text-align: center;
+   transition: var(--transition-speed);
+   user-select: none;
+}
+
+.menu-btn:hover {
+   background: darkgrey;
+   border: 1px solid grey;
+   box-shadow: 0 0 0.5rem darkgrey;
+   color: white;
+   cursor: pointer;
 }
 
 .menu--buttons-container {

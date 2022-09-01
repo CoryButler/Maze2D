@@ -1,7 +1,8 @@
 import { aiTypes, aiSpeeds, maxSeed } from "./global.js";
 
 export default {
-    isPaused: false,
+    isActiveGame: false,
+    isPaused: true,
     width: 10,
     height: 10,
     animate: true,
