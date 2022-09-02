@@ -2,6 +2,7 @@ import React from "react";
 import { cellStatus } from "../global.js";
 import MazeLogic from "./MazeLogic.js";
 import Player from "./Player";
+import PlayerLogic from "./PlayerLogic.js";
 
 export default function Maze(props) {
     const canvasRef = React.createRef();
@@ -17,6 +18,9 @@ export default function Maze(props) {
     let height = rowCount * (cellWidth + wallWidth) + wallWidth;
     let spriteColor = "darkgrey";
     const [players, setPlayers] = React.useState([]);
+    const [playerTrails, setPlayerTrails] = React.useState([]);
+    const [playerSprites, setPlayerSprites] = React.useState([]);
+    const [playerLogic, setPlayerLogic] = React.useState();
 
     if (props.settings.players.some(p => p.isChecked)) {
         spriteColor = props.settings.players.filter(p => p.isChecked)[0].color;
@@ -29,12 +33,34 @@ export default function Maze(props) {
     }
 
     function addPlayers() {
-        setPlayers(props.settings.players.map((p, i) => {
+        setPlayers(props.settings.players.filter(p => p.isChecked).map((p, i) => {
             return (
-                <Player key={i} maze={mazeLogic} mazeHeight={height} mazeWidth={width} player={p} shouldRender={props.shouldRender} />
+                <Player key={i} isPaused={props.settings.isPaused} maze={mazeLogic} mazeHeight={height} mazeWidth={width} cellWidth={cellWidth} wallWidth={wallWidth} player={p} shouldRender={props.shouldRender} />
             );
         }));
     }
+
+    function addPlayers2() {
+        const mazeData = {
+            mazeLogic: mazeLogic,
+            height: height,
+            hidth: width,
+            cellWidth: cellWidth,
+            wallWidth: wallWidth
+        };
+        
+        const tempPlayers = props.settings.players.filter(p => p.isChecked).map((p, i) => {
+            return ({
+                trail: <PlayerTrail key={i} isPaused={props.settings.isPaused} mazeData={mazeData} player={p} shouldRender={props.shouldRender} />,
+                sprite: <PlayerSprite key={i} isPaused={props.settings.isPaused} mazeData={mazeData} player={p} shouldRender={props.shouldRender} />
+            });
+        });
+
+        setPlayerLogic(new PlayerLogic(mazeData, tempPlayers));
+        setPlayerTrails(tempPlayers.map(p => p.trail));
+        setPlayerSprites(tempPlayers.map(p => p.sprite));
+    }
+
 
     function cellInRange(x, y) {
         return (
@@ -57,11 +83,16 @@ export default function Maze(props) {
         }
     }
 
-    function render(drawEndCell = false) {
-        if (drawEndCell) {
-            console.log("render", drawEndCell);
-        }
+    function removePlayers() {
+        setPlayers([]);
+    }
 
+    function removePlayers2() {
+        setPlayerTrails([]);
+        setPlayerSprites([]);
+    }
+
+    function render(drawEndCell = false) {
         mazeLogic.cells().forEach(col => {
             col.forEach(row => {                
                 if (row.hasStatus(cellStatus.VISITED) && (cellInRange(row.x, row.y) || drawEndCell)) {
@@ -87,9 +118,14 @@ export default function Maze(props) {
         });
     }
 
+    function remToPixels(rem) {    
+        return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+    }
+
     React.useEffect(() => {
         if (!props.settings.isActiveGame) return;
 
+        removePlayers();
         context = canvasRef.current.getContext("2d");
         mazeLogic = new MazeLogic(props, initRender, render, addPlayers);
         cells = mazeLogic.cells();
@@ -99,9 +135,19 @@ export default function Maze(props) {
 
     return (
         <div className={"maze-container flex-center" + (props.settings.isPaused ? " maze-hide" : "")}>
-            <div className="maze">
+            <div className="maze" style={{height: height + remToPixels(2) + wallWidth, width: width + remToPixels(2) + wallWidth}} >
                 <canvas height={height} width={width} ref={canvasRef} />
                 {players}
+            </div>
+        </div>
+    );
+
+    return (
+        <div className={"maze-container flex-center" + (props.settings.isPaused ? " maze-hide" : "")}>
+            <div className="maze" style={{height: height + remToPixels(2) + wallWidth, width: width + remToPixels(2) + wallWidth}} >
+                <canvas height={height} width={width} ref={canvasRef} />
+                {playerTrails}
+                {playerSprites}
             </div>
         </div>
     );

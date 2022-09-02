@@ -185,18 +185,23 @@ select:hover {
 }
 
 .maze {
-   align-items: center;
    background: white;
    border: 1px solid grey;
    border-radius: 1rem;
    box-shadow: 0 0 3rem darkgrey;
-   display: flex;
-   justify-content: center;
    opacity: var(--opacity-maze);
    padding: 1rem;
    transform: rotateY(var(--rot-maze));
    transform-origin: right;
    transition: var(--transition-speed) ease-in-out;
+}
+
+.canvasContainer {
+   position: relative;
+}
+
+.maze canvas {
+   position: absolute;
 }
 
 .menu-container {

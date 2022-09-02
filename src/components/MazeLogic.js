@@ -16,6 +16,7 @@ export default function MazeLogic(props, initRender, render, addPlayers) {
 
     this.cells = () => {return cells};
     this.cellStack = () => {return cellStack};
+    this.startCell = () => {return startCell};
 
     for (let i = 0; i < columnCount; i++) {
         cells.push([]);
@@ -24,7 +25,7 @@ export default function MazeLogic(props, initRender, render, addPlayers) {
         }
     }
 
-    let startCell = { x: Math.floor(random.nextNormalized() * columnCount), y: 0 };
+    const startCell = { x: Math.floor(random.nextNormalized() * columnCount), y: 0 };
     let endCell = { x: 0, y: 0 };
     cells[startCell.x][startCell.y].status.push(cellStatus.START);
 
@@ -43,7 +44,6 @@ export default function MazeLogic(props, initRender, render, addPlayers) {
 
     this.create = () => {
         initRender();
-        console.log("anim", props.settings.animate);
         if (props.settings.animate)
             createAnimate();
         else
@@ -109,7 +109,6 @@ export default function MazeLogic(props, initRender, render, addPlayers) {
     }
 
     const createAnimate = function() {
-        console.log("isDisabled", isDisabled)
         if (isDisabled) return;
         if (visitedCellCount < columnCount * rowCount) {
             let neighbors = [];

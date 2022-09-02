@@ -6,8 +6,8 @@ export default {
     width: 10,
     height: 10,
     animate: true,
-    useSeed: false,
-    seed: Math.round(Math.random() * maxSeed),
+    useSeed: true,//false,
+    seed: 1,//Math.round(Math.random() * maxSeed),
     players: [
         { type: aiTypes[0], color: "green", controls: "W A S D (Q)", isChecked: true },
         { type: aiTypes[1], color: "pink", controls: "🡡 🡠 🡣 🡢 (Enter)", isChecked: false },
